@@ -1,0 +1,53 @@
+/* -------------------------Fees & Policy--------------------------- */
+.containerFees {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 60px;
+}
+
+.titleFees {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1d1d1f;
+  margin: 0;
+}
+
+.contentFees {
+  display: flex;
+}
+
+.sectionFees {
+  max-width: 100%;
+  /* margin-top: 20px; */
+}
+
+.containerFees h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1d1d1f;
+  margin-top: 15px;
+}
+
+.containerFees ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.containerFees li {
+  font-size: 14px;
+  color: #3a3a3a;
+  margin-bottom: 5px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.policy li {
+  list-style-type: none;
+}
+
+.containerFees li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #1d1d1f;
+}

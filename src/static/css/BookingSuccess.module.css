@@ -1,0 +1,334 @@
+.layout {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  background-image: linear-gradient(to bottom, #e6f7ff, #f0f2f5);
+  padding: 40px 0;
+}
+
+.content {
+  padding: 0 24px;
+}
+
+.card {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.hotelCard {
+  background-color: #fff;
+  border: none;
+}
+
+.hotelImage {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.hotelInfo {
+  padding: 8px 0;
+}
+
+.ratingContainer {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.starIcon {
+  color: #faad14;
+  font-size: 18px;
+}
+
+.roomImageContainer {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.roomImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.roomTypeBadge {
+  font-weight: bold;
+}
+
+.infoSection {
+  margin-top: 16px;
+}
+
+.infoIcon {
+  margin-right: 8px;
+  color: #1890ff;
+}
+
+.amenitiesContainer {
+  margin-top: 16px;
+}
+
+.amenitiesTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.amenityTag {
+  margin-right: 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.qrCodeContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.qrCodeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paymentCard {
+  margin-top: 24px;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f6ffed;
+  border-radius: 8px;
+  border-left: 4px solid #52c41a;
+}
+
+.amount {
+  font-size: 20px;
+  color: #52c41a;
+}
+
+.stepsCard {
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.noteCard {
+  background-color: #fff;
+  margin-top: 24px;
+}
+
+.noteContent {
+  padding: 8px;
+}
+
+.note {
+  background-color: #fffbe6;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #faad14;
+  margin-top: 16px;
+}
+
+.shareContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.socialIcons {
+  display: flex;
+  gap: 16px;
+}
+
+.socialButton {
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.socialButton:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.thankYou {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 16px;
+  color: #52c41a;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.supportInfo {
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 40px;
+}
+
+.successAnimation {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.successIcon {
+  color: #52c41a;
+  font-size: 72px;
+  animation: pulse 2s infinite;
+}
+
+.successTitle {
+  font-size: 28px;
+  color: #52c41a;
+  font-weight: bold;
+}
+
+.successSubtitle {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.bookingId {
+  font-weight: bold;
+  color: #1890ff;
+  background-color: #e6f7ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.primaryButton {
+  height: 44px;
+  font-size: 16px;
+  padding: 0 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  transition: all 0.3s;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(24, 144, 255, 0.35);
+}
+
+.secondaryButton {
+  height: 44px;
+  font-size: 16px;
+  padding: 0 24px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.secondaryButton:hover {
+  background-color: #f9f9f9;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    padding: 20px 0;
+  }
+  
+  .hotelImage {
+    height: 140px;
+  }
+  
+  .roomImage {
+    height: 160px;
+  }
+  
+  .qrCodeContainer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .socialIcons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media print {
+  .layout {
+    background-color: white;
+    background-image: none;
+    padding: 0;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #f0f0f0;
+    page-break-inside: avoid;
+  }
+  
+  .card:hover {
+    box-shadow: none;
+    transform: none;
+  }
+  
+  button, 
+  .shareContainer,
+  .socialIcons,
+  .supportInfo {
+    display: none !important;
+  }
+  
+  .successIcon {
+    animation: none;
+  }
+} 

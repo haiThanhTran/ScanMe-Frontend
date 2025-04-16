@@ -1,0 +1,28 @@
+stages:
+    - build
+    - deploy
+    - checklog
+
+build:
+    stage: build
+    script:
+        - npm install
+        - npm run build
+    tags:
+        - gitlabserver
+
+deploy:
+    stage: deploy
+    before_script:
+        - apt-get update -y
+        - apt-get install -y openssh-client
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+        - chmod 600 ~/.ssh/id_ed25519
+        - ssh-add ~/.ssh/id_ed25519
+        - echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+    script:
+        - npm run build
+        - sudo cp -r build/* anlp@192.168.124.88:/var/www/html/
+    tags:
+        - gitlabserver

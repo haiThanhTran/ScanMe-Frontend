@@ -1,0 +1,45 @@
+/* --------------------Disabled --------------------------------*/
+.containerDisabled {
+  /* display: flex; */
+  /* justify-content: space-between; */
+  /* align-items: flex-start; */
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  /* max-width: 900px; */
+  gap: 30px;
+  margin: 30px 0;
+}
+
+.supportSectionD {
+  /* max-width: 50%; */
+}
+
+.commonAreaD {
+  display: flex;
+  align-items: start;
+  margin: 23px;
+}
+
+.iconD {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.titleD {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1d1d1f;
+}
+
+.subtitleD {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1d1d1f;
+  margin: 0;
+}
+
+.descriptionD {
+  font-size: 14px;
+  color: #3a3a3a;
+  margin-top: 5px;
+}

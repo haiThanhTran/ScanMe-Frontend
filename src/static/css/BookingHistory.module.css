@@ -1,0 +1,307 @@
+.layout {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+
+  padding: 40px 0;
+}
+
+.content {
+  padding: 0 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerIcon {
+  font-size: 28px;
+  color: #1890ff;
+}
+
+.searchSection {
+  flex: 1;
+  max-width: 500px;
+}
+
+.searchInput {
+  border-radius: 8px;
+  height: 40px;
+}
+
+.card {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.tabs {
+  margin-bottom: 16px;
+}
+
+.tabs :global(.ant-tabs-nav) {
+  margin-bottom: 16px;
+}
+
+.tabExtra {
+  margin-right: 16px;
+}
+
+.loadingContainer {
+  padding: 24px;
+}
+
+.empty {
+  padding: 48px 0;
+}
+
+.table {
+  margin-top: 16px;
+}
+
+.table :global(.ant-table-thead > tr > th) {
+  background-color: #f0f7ff;
+}
+
+.hotelCell {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.hotelAvatar {
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hotelInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hotelMeta {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.dateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.amount {
+  color: #52c41a;
+  font-size: 16px;
+}
+
+.viewButton {
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.viewButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(24, 144, 255, 0.35);
+}
+
+/* Modal Styles */
+.detailModal :global(.ant-modal-content) {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modalTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalTitleIcon {
+  color: #1890ff;
+  font-size: 20px;
+}
+
+.bookingId {
+  background-color: #f0f7ff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hotelDetailHeader {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.hotelDetailImage {
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hotelDetailInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statusContainer {
+  margin-top: 8px;
+}
+
+.detailCard {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.detailCard :global(.ant-card-head) {
+  background-color: #f9f9f9;
+}
+
+.roomImageContainer {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.roomDetailImage {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.timeline {
+  margin: 16px 0;
+}
+
+.statsRow {
+  margin: 16px 0;
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.amenitiesSection {
+  margin-top: 16px;
+}
+
+.amenitiesTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f6ffed;
+  border-radius: 8px;
+  border-left: 4px solid #52c41a;
+  margin-top: 16px;
+}
+
+.amountValue {
+  font-size: 18px;
+  color: #52c41a;
+}
+
+.reviewText {
+  margin-top: 12px;
+  font-style: italic;
+  background-color: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #1890ff;
+}
+
+/* Animation for modal */
+.detailModal :global(.ant-modal-content) {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .layout {
+    padding: 20px 0;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .searchSection {
+    width: 100%;
+    max-width: none;
+  }
+
+  .hotelDetailHeader {
+    flex-direction: column;
+  }
+
+  .hotelDetailImage {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .layout {
+    background-color: white;
+    background-image: none;
+    padding: 0;
+  }
+
+  .card,
+  .detailCard {
+    box-shadow: none;
+    border: 1px solid #f0f0f0;
+    page-break-inside: avoid;
+  }
+
+  .viewButton,
+  .tabExtra,
+  .tabs {
+    display: none !important;
+  }
+}
