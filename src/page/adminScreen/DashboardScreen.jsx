@@ -6,10 +6,8 @@ import LogRequest from "./LogRequest.jsx";
 import ManageUser from "./UserManagement.jsx";
 import RoleBaseRoute from "../../security/RoleBaseRoute.jsx";
 import RolePermissionManagement from "./RoleManage.jsx";
-import FacilityManagement from "./FacilityManagement.jsx";
 import DiscountManagement from "./DiscountManagement.jsx";
 import RouteManagement from "./RouteManagement.jsx";
-import BookingManagement from "./BookingManagement.jsx"
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -36,7 +34,7 @@ export default function Dashboard() {
             path="/manageFacility"
             element={
               <RoleBaseRoute allowedRoles={["SUPER_ADMIN"]}>
-                <FacilityManagement />
+                <div>Manage Facility Component</div>
               </RoleBaseRoute>
             }
           />
@@ -60,7 +58,7 @@ export default function Dashboard() {
             path="/bookingManagement"
             element={
               <RoleBaseRoute allowedRoles={["SUPER_ADMIN"]}>
-                <BookingManagement/>
+                {/* <BookingManagement /> */}
               </RoleBaseRoute>
             }
           />
@@ -68,7 +66,7 @@ export default function Dashboard() {
             path="/routeManagement"
             element={
               <RoleBaseRoute allowedRoles={["SUPER_ADMIN"]}>
-                <RouteManagement/>
+                <RouteManagement />
               </RoleBaseRoute>
             }
           />

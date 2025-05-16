@@ -40,7 +40,7 @@ import {
 import { styled } from "@mui/material/styles";
 import Loading from "../../components/loading/Loading.jsx";
 import { notifyError, notifySuccess } from "../../components/notification/ToastNotification.jsx";
-import AdminDiscountService from '../../services/DiscountService.js';
+// import AdminDiscountService from '../../services/DiscountService.js';
 const DiscountModal = ({ open, onClose, onSubmit, discount }) => {
   const [code, setCode] = useState("");
   const [discount_percentage, setPercentage] = useState(0);

@@ -5,8 +5,6 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import BookingHistory from "../customers/BookingHistory";
-import PaymentHistory from "../customers/paymentHistory";
 import Profile from "../customers/Profile";
 
 const LayoutUser = () => {
