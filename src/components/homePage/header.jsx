@@ -7,7 +7,7 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { notifySuccess } from "../../components/notification/ToastNotification.jsx";
 import authService from "../../services/AuthService.jsx";
 import "../../static/css/styles.css";
@@ -17,9 +17,11 @@ const { Header: AntHeader } = Layout;
 
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [lastCheckTime, setLastCheckTime] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const checkAuthStatus = async () => {
     try {
@@ -53,12 +55,20 @@ function Header() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-    
+
     if (token && username) {
       setIsLoggedIn(true);
       setUser({ username: username });
       checkAuthStatus();
     }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = async (showNotification = true) => {
@@ -129,71 +139,98 @@ function Header() {
     />
   );
 
+  // Menu items config
+  const menuItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Mua Sản Phẩm", path: "/products" },
+    { label: "Mua Voucher", path: "/vouchers" },
+  ];
+
   return (
     <AntHeader
-      className="header-container"
+      className={`header-container${isScrolled ? " scrolled" : ""}`}
       style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        zIndex: 1000,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "#fff",
-        padding: "0 152px",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+        padding: "0 32px",
+        height: 64,
+        boxSizing: "border-box",
       }}
     >
-      {/* Left section with logo and dropdown */}
-      <div style={{ display: "flex", alignItems: "center" }}>
+      {/* Left: Logo */}
+      <div style={{ display: "flex", alignItems: "center", minWidth: 120 }}>
         <img
           onClick={() => navigate("/")}
           src="https://vi.hotels.com/_dms/header/logo.svg?locale=vi_VN&siteid=3213&2&6f9ec7db"
           alt="logo"
-          style={{ height: "32px", marginRight: "16px" }}
+          style={{ height: "28px", marginRight: "24px", cursor: "pointer" }}
         />
-        <Dropdown overlay={tripMenu} placement="bottomLeft">
+      </div>
+      {/* Center: Menu */}
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          justifyContent: "center",
+          flex: 1,
+        }}
+      >
+        {menuItems.map((item) => (
           <Button
-            type="primary"
+            key={item.path}
+            type="link"
             style={{
-              backgroundColor: "#e61e43",
-              border: "none",
-              color: "white",
+              color:
+                location.pathname === item.path ||
+                (item.path === "/" && location.pathname === "/")
+                  ? "#e61e43"
+                  : "#222",
+              fontWeight: 500,
+              fontSize: 15,
+              borderBottom:
+                location.pathname === item.path ||
+                (item.path === "/" && location.pathname === "/")
+                  ? "2px solid #e61e43"
+                  : "none",
+              background: "none",
+              padding: "0 4px",
+              margin: 0,
+              borderRadius: 0,
+              transition: "color 0.3s, border-bottom 0.3s",
+              fontFamily: "Inter, Roboto, Arial, sans-serif",
             }}
+            onClick={() => navigate(item.path)}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#e61e43")}
+            onMouseOut={(e) =>
+              (e.currentTarget.style.color =
+                location.pathname === item.path ||
+                (item.path === "/" && location.pathname === "/")
+                  ? "#e61e43"
+                  : "#222")
+            }
           >
-            <Space>
-              Đặt chuyến đi
-              <DownOutlined />
-            </Space>
+            {item.label}
           </Button>
-        </Dropdown>
+        ))}
       </div>
-
-      {/* Middle section with links */}
-      <div className="header-links" style={{ display: "flex", gap: "24px" }}>
-        <Button style={{ color: "black" }} type="link" icon={<HomeOutlined />}>
-          Đăng thông tin nơi lưu trú
-        </Button>
-        <Button
-          style={{ color: "black" }}
-          type="link"
-          icon={<QuestionCircleOutlined />}
-        >
-          Hỗ trợ
-        </Button>
-        <Button
-          style={{ color: "black" }}
-          type="link"
-          icon={<CompassOutlined />}
-        >
-          Chuyến đi
-        </Button>
-      </div>
-
-      {/* Right section with user actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      {/* Right: User actions */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          minWidth: 180,
+          justifyContent: "flex-end",
+        }}
+      >
         {isLoggedIn ? (
-          <Dropdown
-            overlay={userMenu}
-            placement="bottomRight"
-          >
+          <Dropdown overlay={userMenu} placement="bottomRight">
             <Space style={{ cursor: "pointer" }}>
               <Avatar icon={<UserOutlined />} />
               <span>{user?.username}</span>
@@ -203,7 +240,12 @@ function Header() {
         ) : (
           <>
             <Button
-              style={{ border: "none" }}
+              style={{
+                border: "none",
+                color: "#e61e43",
+                fontWeight: 600,
+                fontSize: 15,
+              }}
               onClick={() => navigate("/login")}
             >
               Đăng nhập
@@ -213,6 +255,10 @@ function Header() {
                 backgroundColor: "#e61e43",
                 border: "none",
                 color: "white",
+                fontWeight: 600,
+                fontSize: 15,
+                minWidth: 100,
+                padding: "0 12px",
               }}
               onClick={() => navigate("/register")}
             >

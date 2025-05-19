@@ -13,8 +13,7 @@ import {
 } from "antd";
 
 function MainContent() {
-  
-const { Content } = Layout;
+  const { Content } = Layout;
   return (
     <Content
       style={{
@@ -24,9 +23,9 @@ const { Content } = Layout;
         paddingTop: "20px",
       }}
     >
-      <div className="main-content">
-        <h1>Welcome to ScanMe</h1>
-        <p>Đây là giao diện của trang ScanMe</p>
+      <div className="main-content-home" style={{ paddingTop: 72 }}>
+      <h1>Mua Sản Phẩm</h1>
+      <p>Đây là trang hiển thị danh sách sản phẩm.</p>
       </div>
     </Content>
   );

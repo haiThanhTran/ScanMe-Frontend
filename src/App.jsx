@@ -12,6 +12,8 @@ import MainContent from "./components/homePage/mainContent.jsx";
 import RoleBaseRoute from "./security/RoleBaseRoute.jsx";
 import LayoutUser from "./page/userInformation/LayoutUser.jsx";
 import Profile from "./page/customers/Profile.jsx";
+import ProductsPage from "./page/ProductsPage.jsx";
+import VouchersPage from "./page/VouchersPage.jsx";
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />}>
             <Route index element={<MainContent />} />
-            <Route path="/information/*" element={<LayoutUser />} />
+            <Route path="information/*" element={<LayoutUser />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="vouchers" element={<VouchersPage />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -36,7 +40,6 @@ function App() {
                 </RoleBaseRoute>
               }
             />
-
             <Route path="/profile" element={<Profile />} />
           </Route>
           {/* Catch-all route for undefined routes */}
