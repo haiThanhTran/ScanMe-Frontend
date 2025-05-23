@@ -14,6 +14,7 @@ import LayoutUser from "./page/userInformation/LayoutUser.jsx";
 import Profile from "./page/customers/Profile.jsx";
 import ProductsPage from "./page/ProductsPage.jsx";
 import VouchersPage from "./page/VouchersPage.jsx";
+import DashboardStore from "./page/storeScreenn/DashboardStore.jsx";
 
 function App() {
   return (
@@ -37,6 +38,17 @@ function App() {
               element={
                 <RoleBaseRoute allowedRoles={["SUPER_ADMIN"]}>
                   <Dashboard />
+                </RoleBaseRoute>
+              }
+            />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+          <Route element={<PrivateRoute />}>
+            <Route
+              path="/store/*"
+              element={
+                <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
+                  <DashboardStore />
                 </RoleBaseRoute>
               }
             />

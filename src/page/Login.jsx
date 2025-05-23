@@ -171,7 +171,12 @@ const Login = () => {
           } else if (decode.role === "GUEST_ROLE_MEMBER") {
             navigate("/");
             notifySuccess("Đăng nhập thành công!");
-          } else {
+          } 
+          if (decode.role === "STORE_MANAGER") {
+            navigate("/store/homeStore");
+            notifySuccess("Đăng nhập thành công!");
+          }
+          else {
             navigate("/403");
             notifyError("Bạn không có quyền truy cập!");
           }
@@ -243,7 +248,11 @@ const Login = () => {
           } else if (decode.role === "GUEST_ROLE_MEMBER") {
             navigate("/");
             notifySuccess("Đăng nhập thành công!");
-          } else {
+          } if (decode.role === "STORE_MANAGER") {
+            navigate("/store/homeStore");
+            notifySuccess("Đăng nhập thành công!");
+          }
+          else {
             navigate("/403");
             notifyError("Bạn không có quyền truy cập!");
           }

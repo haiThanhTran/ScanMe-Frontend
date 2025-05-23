@@ -74,10 +74,10 @@ const RolePermissionManagement = () => {
             const updatedPermissions = [...prevPermissions];
             const currentPermissions = updatedPermissions[rolePermissionIndex].permissionIds;
 
-            if (currentPermissions.includes(permissionId)) {
-                updatedPermissions[rolePermissionIndex].permissionIds = currentPermissions.filter(id => id !== permissionId);
+            if ( currentPermissions && currentPermissions.includes(permissionId) ) {
+                 updatedPermissions[rolePermissionIndex].permissionIds = currentPermissions.filter(id => id !== permissionId);
             } else {
-                updatedPermissions[rolePermissionIndex].permissionIds.push(permissionId);
+                 updatedPermissions[rolePermissionIndex].permissionIds.push(permissionId);
             }
 
             return updatedPermissions;
@@ -169,7 +169,7 @@ const RolePermissionManagement = () => {
 
     const getPermissionCount = (roleId) => {
         const rolePermission = rolePermissions.find(rp => rp.roleId === roleId);
-        return rolePermission ? rolePermission.permissionIds.length : 0;
+        return rolePermission ? rolePermission.permissionIds?.length : 0;
     };
 
     // Group permissions by category (this is an example - you may need to adjust based on your actual data structure)
