@@ -12,8 +12,9 @@ import MainContent from "./components/homePage/mainContent.jsx";
 import RoleBaseRoute from "./security/RoleBaseRoute.jsx";
 import LayoutUser from "./page/userInformation/LayoutUser.jsx";
 import Profile from "./page/customers/Profile.jsx";
-import ProductsPage from "./page/ProductsPage.jsx";
-import VouchersPage from "./page/VouchersPage.jsx";
+import ProductsPage from "./page/ProductPages/ProductsPage.jsx";
+import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
+import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route index element={<MainContent />} />
             <Route path="information/*" element={<LayoutUser />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="vouchers" element={<VouchersPage />} />
           </Route>
           <Route path="/login" element={<Login />} />

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import FilterSidebar from "../components/FilterSidebar";
-import VoucherList from "../components/VoucherList";
-import fetchUtils from "../utils/fetchUtils";
+import React, { useState, useEffect, useRef } from "react";
+import FilterSidebar from "../../components/productComponent/FilterSidebar";
+import VoucherList from "../../components/voucherComponent/VoucherList";
+import fetchUtils from "../../utils/fetchUtils";
 
 const VouchersPage = () => {
   const [selectedStores, setSelectedStores] = useState([]);
@@ -10,11 +10,14 @@ const VouchersPage = () => {
   const [stores, setStores] = useState([]);
   const [categories, setCategories] = useState([]);
 
+  // Sticky FilterSidebar
+  const sidebarRef = useRef(null);
+
   useEffect(() => {
     const fetchData = async () => {
       const [storeRes, cateRes] = await Promise.all([
-        fetchUtils.get("/store", false),
-        fetchUtils.get("/category", false),
+        fetchUtils.get("/stores", false),
+        fetchUtils.get("/categories", false),
       ]);
       setStores(storeRes.stores || storeRes);
       setCategories(cateRes.categories || cateRes);
@@ -32,7 +35,18 @@ const VouchersPage = () => {
         background: "#f7f7f7",
       }}
     >
-      <div style={{ width: 280, marginRight: 32 }}>
+      <div
+        style={{
+          width: 280,
+          marginRight: 32,
+          alignSelf: "flex-start",
+          position: "sticky",
+          top: 88,
+          zIndex: 10,
+          maxHeight: "calc(100vh - 120px)",
+        }}
+        ref={sidebarRef}
+      >
         <FilterSidebar
           selectedStores={selectedStores}
           setSelectedStores={setSelectedStores}
