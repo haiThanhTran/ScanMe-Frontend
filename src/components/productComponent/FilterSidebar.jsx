@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Checkbox, Collapse, Spin } from "antd";
+import fetchUtils from "../../utils/fetchUtils";
 
 const { Panel } = Collapse;
 
@@ -18,8 +19,8 @@ const FilterSidebar = ({
     const fetchData = async () => {
       setLoading(true);
       const [storeRes, cateRes] = await Promise.all([
-        fetch("/store").then((r) => r.json()),
-        fetch("/category").then((r) => r.json()),
+        fetchUtils.get("/stores", false),
+        fetchUtils.get("/categories", false),
       ]);
       setStores(storeRes.stores || storeRes);
       setCategories(cateRes.categories || cateRes);

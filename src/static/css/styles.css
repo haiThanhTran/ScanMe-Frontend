@@ -433,3 +433,252 @@ body, html {
   color: #e61e43 !important;
   border-bottom: 2px solid #e61e43 !important;
 }
+
+.product-filter-card {
+  border: none; /* Remove border */
+  border-radius: 8px; /* Match voucher card radius */
+  box-shadow: 0 2px 12px #eee; /* Match voucher card shadow */
+  /* Add padding if needed, currently handled by ProductsPage inline style or Collapse component */
+}
+
+.product-filter-card .ant-card-body {
+    padding: 0 !important; /* Remove padding from card body to let collapse panels handle it */
+}
+
+.product-filter-card .ant-card-head {
+    padding: 16px; /* Add padding back to card header */
+    font-weight: bold;
+    border-bottom: none !important; /* Remove header border */
+}
+
+.product-filter-card .ant-divider {
+    margin: 0 0 16px 0 !important; /* Adjust margin for divider below title */
+    display: none; /* Hide default divider */
+}
+
+.product-filter-card .ant-collapse {
+    /* Style for the collapse component */
+    background-color: transparent !important; /* Transparent background */
+    border: none !important; /* Remove default collapse border */
+}
+
+.product-filter-card .ant-collapse-item {
+    border-bottom: 1px solid #f0f0f0 !important; /* Add bottom border to collapse items */
+}
+
+.product-filter-card .ant-collapse-header {
+    padding: 12px 16px !important; /* Adjust padding for collapse headers */
+    font-weight: 600; /* Match voucher filter header weight */
+    color: rgba(0, 0, 0, 0.85); /* Darker text */
+}
+
+.product-filter-card .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0 16px 16px 16px !important; /* Adjust padding inside collapse content */
+}
+
+.product-filter-card .ant-checkbox-group-item {
+    display: flex; /* Use flex to align checkbox and content */
+    align-items: center;
+    margin-bottom: 8px; /* Space between checkbox items */
+}
+
+.product-filter-card .ant-checkbox-group-item .ant-space-item {
+    margin-right: 8px; /* Space between checkbox and image/text */
+}
+
+.product-filter-card .ant-checkbox + span {
+    order: 1; /* Ensure checkbox comes first */
+    margin-left: 8px; /* Space between checkbox and label */
+}
+
+.product-filter-card .ant-checkbox-group-item img {
+    width: 20px; /* Set logo size */
+    height: 20px;
+    object-fit: contain; /* Ensure logo is contained */
+}
+
+.product-filter-card .ant-typography strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Price Range Inputs */
+.product-filter-card .ant-input-number {
+    width: 100% !important; /* Ensure full width */
+}
+
+.product-filter-card .ant-space-vertical > .ant-space-item {
+    width: 100%; /* Ensure space items take full width in vertical space */
+}
+
+
+.product-controls {
+    margin-bottom: 24px; /* Space below search/sort controls */
+}
+
+.product-card {
+  border: none; /* Remove default border */
+  border-radius: 18px; /* Match voucher card radius */
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px #eee; /* Match voucher card shadow */
+  position: relative; /* Needed for absolute positioning of discount tag/notches */
+  transform: scale(1); /* Initial scale */
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); /* Slightly larger, more pronounced shadow on hover */
+  transform: scale(1.02); /* Subtle enlarge effect */
+}
+
+.product-card-image-container {
+    position: relative; /* Container for image and discount tag */
+}
+
+.product-card-image {
+  width: 100%;
+  height: 180px; /* Adjust height to potentially match voucher images */
+  object-fit: cover;
+}
+
+.discount-tag {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #52c41a; /* Green background for discount */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 2; /* Ensure tag is above image */
+}
+
+.product-card .ant-card-body {
+  padding: 16px 20px; /* Adjust padding to match voucher card */
+  display: flex; /* Use flex to control internal layout */
+  flex-direction: column; /* Stack content vertically */
+}
+
+.product-card-title {
+    margin-bottom: 4px !important; /* Adjust space below product title */
+    font-size: 16px !important; /* Adjust font size */
+    font-weight: 600; /* Match voucher card title weight */
+}
+
+.product-card-store {
+    font-size: 13px; /* Adjust store name font size */
+    color: rgba(0, 0, 0, 0.65); /* Slightly darker grey for store name */
+    margin-bottom: 8px; /* Space below store name */
+}
+
+.product-card-prices {
+    margin-top: auto; /* Push prices to the bottom */
+    margin-bottom: 8px; /* Space below prices */
+}
+
+.product-card-prices .original-price {
+    font-size: 14px; /* Adjust original price font size */
+    color: rgba(0, 0, 0, 0.45); /* Grey color for original price */
+}
+
+.product-card-prices .discounted-price {
+    font-size: 16px; /* Adjust discounted price font size */
+    font-weight: bold;
+    color: #ff4d4f; /* Red color for discounted price */
+}
+
+.product-card-actions {
+    margin-top: 16px; /* Space above the Add to Cart button */
+}
+
+.product-card-actions .ant-btn-primary {
+    background-color: #ff7800; /* Orange color for button */
+    border-color: #ff7800; /* Orange border */
+    font-weight: 600; /* Match voucher button weight */
+}
+
+.product-card-actions .ant-btn-primary:hover,
+.product-card-actions .ant-btn-primary:focus {
+    background-color: #ffa940; /* Lighter orange on hover/focus */
+    border-color: #ffa940;
+}
+
+.ant-pagination {
+    margin-top: 20px; /* Space above pagination */
+}
+
+/* Add or modify styles for product grid */
+.product-grid {
+    display: grid; /* Keep grid display */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+    gap: 16px; /* Space between grid items */
+}
+
+/* Ensure ProductCard fits within the grid item */
+.product-grid .product-card {
+    width: 100%;
+    height: 100%; /* Make card fill the grid item height */
+    display: flex; /* Use flex to make content fill card height */
+    flex-direction: column;
+}
+
+.product-card .ant-card-body {
+    flex-grow: 1; /* Allow card body to take available space */
+}
+
+/* Search input styling */
+.ecommerce-search-input .ant-input-affix-wrapper {
+    border-radius: 20px; /* Rounded corners */
+    overflow: hidden; /* Hide inner input corners */
+    border-color: #d9d9d9; /* Default Ant Design border color */
+    box-shadow: none; /* Remove default shadow */
+}
+
+.ecommerce-search-input .ant-input-affix-wrapper:hover {
+    border-color: #40a9ff; /* Ant Design blue on hover */
+}
+
+.ecommerce-search-input .ant-input-affix-wrapper-focused {
+    border-color: #40a9ff; /* Ant Design blue on focus */
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); /* Ant Design focus shadow */
+}
+
+.ecommerce-search-input .ant-input {
+    border: none !important; /* Remove inner input border */
+    box-shadow: none !important; /* Remove inner input shadow */
+}
+
+.ecommerce-search-input .ant-input-search-button {
+    border-top-right-radius: 20px !important; /* Apply rounded corner to button */
+    border-bottom-right-radius: 20px !important; /* Apply rounded corner to button */
+    background-color: #1890ff; /* Ant Design blue for button */
+    border-color: #1890ff; /* Ant Design blue for button */
+}
+
+.ecommerce-search-input .ant-input-search-button:hover,
+.ecommerce-search-input .ant-input-search-button:focus {
+    background-color: #40a9ff; /* Lighter blue on hover/focus */
+    border-color: #40a9ff;
+}
+
+
+/* Styles for the notch effect (optional, add if needed) */
+/*
+.voucher-notch {
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 48px;
+    background: #f7f7f7; / Use background color of the main page /}
+    border-radius: 50%;
+    z-index: 2;
+    transform: translateY(-50%);
+}
+.voucher-notch.left {
+    left: -12px;
+}
+.voucher-notch.right {
+    right: -12px;
+}
+*/
