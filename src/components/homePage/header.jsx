@@ -1,17 +1,17 @@
+// src/components/layout/Header.jsx
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Layout, Button, Menu, Space, Dropdown, Avatar } from "antd";
 import {
   DownOutlined,
-  QuestionCircleOutlined,
-  CompassOutlined,
-  HomeOutlined,
   UserOutlined,
   LogoutOutlined,
+  WalletOutlined,
+  HistoryOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { notifySuccess } from "../../components/notification/ToastNotification.jsx";
-import authService from "../../services/AuthService.jsx";
-import "../../static/css/styles.css";
-import { useState, useEffect } from "react";
+import styles from "./Header.module.css";
 
 const { Header: AntHeader } = Layout;
 
@@ -20,252 +20,191 @@ function Header() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [lastCheckTime, setLastCheckTime] = useState(0);
-  const [isScrolled, setIsScrolled] = useState(false);
 
-  const checkAuthStatus = async () => {
-    try {
-      const currentTime = Date.now();
-      if (currentTime - lastCheckTime < 2000) {
-        return;
-      }
-      setLastCheckTime(currentTime);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [isDocked, setIsDocked] = useState(false);
+  const lastScrollY = useRef(0);
+  const headerRef = useRef(null);
 
-      if (!authService.isAuthenticated()) {
-        handleLogout(false);
-        return;
-      }
-
-      const userData = await authService.getUser();
-      if (userData && userData.data) {
-        setIsLoggedIn(true);
-        setUser(userData.data);
-      } else {
-        handleLogout(false);
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      if (error.message.includes("Too Many Requests")) {
-        return;
-      }
-      handleLogout(false);
-    }
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
-
-    if (token && username) {
-      setIsLoggedIn(true);
-      setUser({ username: username });
-      checkAuthStatus();
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleLogout = async (showNotification = true) => {
-    try {
+  const handleLogout = useCallback(
+    async (showNotification = true, shouldNavigate = true) => {
       if (isLoggedIn && showNotification) {
-        await authService.logout();
         notifySuccess("Đăng xuất thành công!");
       }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
       setIsLoggedIn(false);
       setUser(null);
-      navigate("/");
+      if (shouldNavigate) {
+        navigate("/");
+      }
+    },
+    [isLoggedIn, navigate]
+  );
+
+  const checkAuthStatus = useCallback(() => {
+    const token = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+    if (token && storedUsername) {
+      if (!isLoggedIn || user?.username !== storedUsername) {
+        setIsLoggedIn(true);
+        setUser({ username: storedUsername });
+      }
+    } else {
+      if (isLoggedIn) {
+        handleLogout(false, false);
+      }
+    }
+  }, [isLoggedIn, user, handleLogout]);
+
+  useEffect(() => {
+    checkAuthStatus();
+    const handleStorageChange = (event) => {
+      if (event.key === 'token' || event.key === 'username') {
+        checkAuthStatus();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [checkAuthStatus]);
+
+  useEffect(() => {
+    const headerHeight = headerRef.current ? headerRef.current.offsetHeight : 70;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY <= 5) {
+        setIsHeaderVisible(true);
+        setIsDocked(false); // Luôn undocked khi ở top
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > headerHeight / 2) {
+        setIsHeaderVisible(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        setIsHeaderVisible(true);
+        setIsDocked(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    const currentScrollY = window.scrollY;
+    setIsDocked(currentScrollY > 5);
+    setIsHeaderVisible(true);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []); // Chạy 1 lần khi mount
+
+  const handleMenuClick = (e) => {
+    const key = e.key;
+    switch (key) {
+      case "profile": navigate("/information/profile"); break;
+      case "cart": navigate("/information/cart"); break;
+      case "vouchers": navigate("/information/my-vouchers"); break;
+      case "orders": navigate("/information/order-history"); break;
+      case "logout": handleLogout(); break;
+      default: break;
     }
   };
 
-  const userMenu = (
-    <Menu style={{ width: 150, listStyleType: "none", padding: 15 }}>
-      <Menu.Item key="1">
-        <a href="/information/profile">Tài khoản</a>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <a href="/information/payment-history">Lịch sử trả tiền</a>
-      </Menu.Item>
-      <Menu.Item key="3">
-        <a href="/information/booking-history">Lịch sử đặt phòng</a>
-      </Menu.Item>
-      <Menu.Item key="5">
-        <a href="/information/feedback">Phản hồi</a>
-      </Menu.Item>
-
-      <Menu.Divider />
-
-      <Menu.Item
-        key="6"
-        onClick={handleLogout}
-        style={{
-          fontWeight: "bold",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <LogoutOutlined />{" "}
-        <a href="#" style={{ textAlign: "center" }}>
-          Đăng xuất
-        </a>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const tripMenu = (
-    <Menu
-      items={[
-        {
-          key: "1",
-          label: "Khách sạn",
-        },
-        {
-          key: "2",
-          label: "Vé máy bay",
-        },
-        {
-          key: "3",
-          label: "Tour du lịch",
-        },
-      ]}
-    />
-  );
-
-  // Menu items config
-  const menuItems = [
-    { label: "Trang chủ", path: "/" },
-    { label: "Mua Sản Phẩm", path: "/products" },
-    { label: "Mua Voucher", path: "/vouchers" },
+  const userMenuItems = [
+    {
+        key: "userHeader", // Key cho mục header trong dropdown
+        label: (user && user.username) ? user.username : "Tài khoản", // Hiển thị username
+        type: "group", // Kiểu group để style khác
+        className: styles.dropdownUserHeader // Class để style
+    },
+    { type: "divider" },
+    { key: "profile", label: "Tài khoản của tôi", icon: <UserOutlined /> },
+    { key: "cart", label: "Giỏ hàng của tôi", icon: <ShoppingCartOutlined /> },
+    { key: "vouchers", label: "Ví Voucher", icon: <WalletOutlined /> },
+    { key: "orders", label: "Đơn hàng", icon: <HistoryOutlined /> },
+    { type: "divider" },
+    { key: "logout", label: "Đăng xuất", icon: <LogoutOutlined />, danger: true },
   ];
 
+  const mainMenuItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Mua Sản Phẩm", path: "/products" },
+    { label: "Săn Voucher", path: "/vouchers" },
+  ];
+
+  const headerClasses = [
+    styles.appHeader,
+    isHeaderVisible ? styles.visible : styles.hidden,
+    isDocked ? styles.docked : styles.undocked,
+  ].join(" ");
+
   return (
-    <AntHeader
-      className={`header-container${isScrolled ? " scrolled" : ""}`}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "0 32px",
-        height: 64,
-        boxSizing: "border-box",
-      }}
-    >
-      {/* Left: Logo */}
-      <div style={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-        <img
-          onClick={() => navigate("/")}
-          src="https://vi.hotels.com/_dms/header/logo.svg?locale=vi_VN&siteid=3213&2&6f9ec7db"
-          alt="logo"
-          style={{ height: "28px", marginRight: "24px", cursor: "pointer" }}
-        />
-      </div>
-      {/* Center: Menu */}
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          justifyContent: "center",
-          flex: 1,
-        }}
-      >
-        {menuItems.map((item) => (
-          <Button
-            key={item.path}
-            type="link"
-            style={{
-              color:
-                location.pathname === item.path ||
-                (item.path === "/" && location.pathname === "/")
-                  ? "#e61e43"
-                  : "#222",
-              fontWeight: 500,
-              fontSize: 15,
-              borderBottom:
-                location.pathname === item.path ||
-                (item.path === "/" && location.pathname === "/")
-                  ? "2px solid #e61e43"
-                  : "none",
-              background: "none",
-              padding: "0 4px",
-              margin: 0,
-              borderRadius: 0,
-              transition: "color 0.3s, border-bottom 0.3s",
-              fontFamily: "Inter, Roboto, Arial, sans-serif",
-            }}
-            onClick={() => navigate(item.path)}
-            onMouseOver={(e) => (e.currentTarget.style.color = "#e61e43")}
-            onMouseOut={(e) =>
-              (e.currentTarget.style.color =
-                location.pathname === item.path ||
-                (item.path === "/" && location.pathname === "/")
-                  ? "#e61e43"
-                  : "#222")
-            }
-          >
-            {item.label}
-          </Button>
-        ))}
-      </div>
-      {/* Right: User actions */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          minWidth: 180,
-          justifyContent: "flex-end",
-        }}
-      >
-        {isLoggedIn ? (
-          <Dropdown overlay={userMenu} placement="bottomRight">
-            <Space style={{ cursor: "pointer" }}>
-              <Avatar icon={<UserOutlined />} />
-              <span>{user?.username}</span>
-              <DownOutlined />
-            </Space>
-          </Dropdown>
-        ) : (
-          <>
-            <Button
-              style={{
-                border: "none",
-                color: "#e61e43",
-                fontWeight: 600,
-                fontSize: 15,
-              }}
-              onClick={() => navigate("/login")}
-            >
-              Đăng nhập
-            </Button>
-            <Button
-              style={{
-                backgroundColor: "#e61e43",
-                border: "none",
-                color: "white",
-                fontWeight: 600,
-                fontSize: 15,
-                minWidth: 100,
-                padding: "0 12px",
-              }}
-              onClick={() => navigate("/register")}
-            >
-              Tạo tài khoản
-            </Button>
-          </>
-        )}
+    <AntHeader ref={headerRef} className={headerClasses}>
+      <div className={styles.headerMaxWidthContainer}>
+        <div className={styles.headerContent}>
+          <div className={styles.leftSection}>
+            <div className={styles.logoContainer} onClick={() => navigate("/")}>
+              <img
+                src="https://www.dinkel.shop/media/7c/17/5c/1688390963/sale-cart.png"
+                alt="Logo"
+                className={styles.logo}
+              />
+            </div>
+            <nav className={styles.mainNav}>
+              {mainMenuItems.map((item) => {
+                const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== "/");
+                let linkColor = isDocked ? (isActive ? "#D9232D" : "#333333") : (isActive ? "#FFFFFF" : "#E0E0E0");
+
+                return (
+                  <Button
+                    key={item.path}
+                    type="text"
+                    className={`${styles.menuItem} ${isActive ? styles.active : ""}`}
+                    style={{ color: linkColor }}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <span className={styles.menuItemUnderline}></span>
+                    {item.label}
+                  </Button>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className={styles.rightSection}>
+            {isLoggedIn && user ? (
+              <Dropdown
+                menu={{ items: userMenuItems, onClick: handleMenuClick }}
+                placement="bottomRight"
+                trigger={["hover"]} // ĐỔI THÀNH HOVER
+                overlayClassName={styles.userDropdownOverlay}
+              >
+                {/* Bỏ span username ở đây, nó sẽ nằm trong dropdown menu */}
+                <Space className={`${styles.userDropdownToggle} ${isDocked ? styles.textDark : styles.textLight}`}>
+                  <Avatar
+                      icon={<UserOutlined />}
+                      size="default" // To hơn chút
+                      style={{
+                          backgroundColor: isDocked ? '#FFF1F0' : 'rgba(255,255,255,0.3)',
+                          color: isDocked ? '#D9232D' : '#fff'
+                      }}
+                  />
+                   {/* <DownOutlined style={{fontSize: '10px'}} /> Bỏ down arrow nếu không muốn */}
+                </Space>
+              </Dropdown>
+            ) : (
+              <Space size="small">
+                  <Button className={`${styles.headerButton} ${styles.aiaPlusButton} ${!isDocked ? styles.buttonHomeUndocked : ""}`}>
+                      AIA+
+                  </Button>
+                  <Button
+                    type="primary"
+                    danger
+                    className={`${styles.headerButton} ${styles.contactButton}`}
+                    onClick={() => navigate("/register")}
+                  >
+                    Liên hệ
+                  </Button>
+              </Space>
+            )}
+          </div>
+        </div>
       </div>
     </AntHeader>
   );

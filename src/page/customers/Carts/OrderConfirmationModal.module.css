@@ -1,0 +1,73 @@
+/* src/components/cart/OrderConfirmationModal.module.css */
+.orderModal :global(.ant-modal-content) {
+    border-radius: 8px;
+  }
+  
+  .orderModal :global(.ant-modal-header) {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 16px 24px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .orderModal :global(.ant-modal-title .ant-typography) {
+    font-weight: 500;
+  }
+  
+  .orderModal :global(.ant-modal-body) {
+    max-height: 65vh; /* Giới hạn chiều cao tối đa của body modal */
+    overflow-y: auto; /* Thêm thanh cuộn dọc nếu nội dung dài hơn */
+    padding: 24px;
+  }
+  
+  .formSection {
+    margin-bottom: 24px;
+  }
+  
+  .shippingInfoDisplay p {
+    margin-bottom: 8px;
+    font-size: 1em;
+  }
+  
+  .shippingInfoDisplay strong {
+    margin-right: 8px;
+    color: #595959;
+  }
+  
+  .productList :global(.ant-list-item) {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .productList :global(.ant-list-item-meta-avatar) {
+    margin-right: 12px;
+  }
+  
+  .productList :global(.ant-list-item-meta-title) {
+    margin-bottom: 2px !important;
+    font-size: 0.95em;
+  }
+  .productList :global(.ant-list-item-meta-description) {
+      font-size: 0.85em;
+  }
+  
+  
+  .totalAmountSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .totalAmountSection .ant-typography {
+    margin-bottom: 0;
+  }
+  
+  .formActions {
+    margin-top: 24px;
+    text-align: right;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }

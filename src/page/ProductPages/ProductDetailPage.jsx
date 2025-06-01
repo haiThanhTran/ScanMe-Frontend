@@ -108,14 +108,16 @@ const ProductDetailPage = () => {
                 <Typography.Text strong>Price: </Typography.Text>
                 {product.discountedPrice ? (
                   <Space>
-                    <Text delete>${product.price}</Text>
+                    <Text delete>
+                      {product.price?.toLocaleString("vi-VN")} đ
+                    </Text>
                     <Text strong type="danger" style={{ fontSize: "1.2em" }}>
-                      ${product.discountedPrice}
+                      {product.discountedPrice?.toLocaleString("vi-VN")} đ
                     </Text>
                   </Space>
                 ) : (
                   <Text strong style={{ fontSize: "1.2em" }}>
-                    ${product.price}
+                    {product.price?.toLocaleString("vi-VN")} đ
                   </Text>
                 )}
               </div>

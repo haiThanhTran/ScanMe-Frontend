@@ -10,25 +10,31 @@ import Dashboard from "./page/adminScreen/DashboardScreen.jsx";
 import HomePage from "./components/homePage/homepage.jsx";
 import MainContent from "./components/homePage/mainContent.jsx";
 import RoleBaseRoute from "./security/RoleBaseRoute.jsx";
-import LayoutUser from "./page/userInformation/LayoutUser.jsx";
-import Profile from "./page/customers/Profile.jsx";
+import LayoutUser from "./page/customers/userInformation/LayoutUser.jsx";
+import Profile from "./page/customers/ProfilePage.jsx";
 import ProductsPage from "./page/ProductPages/ProductsPage.jsx";
 import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
 import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
+import MyVouchersPage from "./page/customers/MyVouchersPage.jsx";
+import OrderHistoryPage from "./page/customers/OrderHistoryPage.jsx";
+import ScrollToTop from "./utils/ScrollToTop.jsx"; // <<<<<< IMPORT COMPONENT MỚI
 
 function App() {
   return (
     <>
       <ToastNotification />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />}>
             <Route index element={<MainContent />} />
-            <Route path="information/*" element={<LayoutUser />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="vouchers" element={<VouchersPage />} />
+            {/* <Route path="orders" element={<OrderHistoryPage />} /> */}
+            <Route path="information/*" element={<LayoutUser />} />
           </Route>
+            
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/404" element={<NotFoundPage />} />
@@ -42,7 +48,6 @@ function App() {
                 </RoleBaseRoute>
               }
             />
-            <Route path="/profile" element={<Profile />} />
           </Route>
           {/* Catch-all route for undefined routes */}
           <Route path="*" element={<Navigate to="/404" />} />

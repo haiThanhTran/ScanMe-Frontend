@@ -210,7 +210,6 @@ const ProductsPage = () => {
               alignItems: "center",
               paddingBottom: "16px",
               borderBottom: "1px solid #f0f0f0",
-              position: "sticky",
               top: 72,
               zIndex: 9,
               background: "#fff",
@@ -248,43 +247,43 @@ const ProductsPage = () => {
             </Typography.Text>
           </div>
           {/* Spin bao bọc ProductList và Empty */}
-            <Spin
-              spinning={filteringLoading && !initialLoading}
-              tip="Đang cập nhật sản phẩm..."
-            >
-              {products.length > 0 ? (
-                <ProductList products={products} />
-              ) : (
-                !initialLoading &&
-                !filteringLoading && (
-                  <Empty description="Không có sản phẩm nào phù hợp với lựa chọn của bạn." />
-                )
-              )}
-            </Spin>
+          <Spin
+            spinning={filteringLoading && !initialLoading}
+            tip="Đang cập nhật sản phẩm..."
+          >
+            {products.length > 0 ? (
+              <ProductList products={products} />
+            ) : (
+              !initialLoading &&
+              !filteringLoading && (
+                <Empty description="Không có sản phẩm nào phù hợp với lựa chọn của bạn." />
+              )
+            )}
+          </Spin>
           {totalProducts > 0 &&
             !filteringLoading && ( // Chỉ hiển thị pagination khi có sản phẩm và không đang loading
-            <div
-              style={{
-                textAlign: "right",
-                marginTop: "24px",
-                padding: "16px 0",
-                borderTop: "1px solid #f0f0f0",
-              }}
-            >
-              <Pagination
-                current={pagination.current}
-                pageSize={pagination.pageSize}
-                total={totalProducts}
-                onChange={handlePaginationChange}
-                showSizeChanger
+              <div
+                style={{
+                  textAlign: "right",
+                  marginTop: "24px",
+                  padding: "16px 0",
+                  borderTop: "1px solid #f0f0f0",
+                }}
+              >
+                <Pagination
+                  current={pagination.current}
+                  pageSize={pagination.pageSize}
+                  total={totalProducts}
+                  onChange={handlePaginationChange}
+                  showSizeChanger
                   onShowSizeChange={handlePaginationChange} // Quan trọng: dùng cùng handler cho cả page và pageSize
-                pageSizeOptions={["12", "16", "20", "24"]}
-                showTotal={(total, range) =>
-                  `${range[0]}-${range[1]} của ${total} sản phẩm`
-                }
-              />
-            </div>
-          )}
+                  pageSizeOptions={["12", "16", "20", "24"]}
+                  showTotal={(total, range) =>
+                    `${range[0]}-${range[1]} của ${total} sản phẩm`
+                  }
+                />
+              </div>
+            )}
         </div>
       </div>
     </div>

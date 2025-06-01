@@ -6,14 +6,19 @@ import {
   Button,
   TextField,
   Typography,
-  Link,
+  Link as MuiLink,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Avatar,
+  ThemeProvider,
+  CssBaseline,
   InputAdornment,
   IconButton,
-  Stack,
+  FormControl,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"; // Material UI icon
 import axios from "axios";
-import { keyframes } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import VerificationSuccessScreen from "../components/successScreen/VerificationSuccessScreen.jsx";
 import {
@@ -21,289 +26,434 @@ import {
   notifyError,
 } from "../components/notification/ToastNotification.jsx";
 import Loading from "../components/loading/Loading.jsx";
-// Các styled components giữ nguyên
-const Card = styled("div")(({ theme }) => ({
-  background: "rgba(255, 255, 255, 0.9)",
-  borderRadius: "16px",
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
-  padding: theme.spacing(4),
-  width: "100%",
-  maxWidth: "450px",
-  maxHeight: "90vh",
-  overflowY: "auto",
-  animation: `${keyframes`
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  `} 0.5s ease-in-out`,
-  zIndex: 10,
-}));
+import { pizzaTheme } from "./theme"; // Giả sử bạn lưu theme.js cùng cấp
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  borderRadius: "8px",
-  padding: "12px",
-  fontWeight: 600,
-  textTransform: "none",
-  fontSize: "1rem",
-  background: "linear-gradient(90deg, #2988BC 0%, #2F496E 100%)",
-  "&:hover": {
-    background: "linear-gradient(90deg, #2F496E 0%, #2988BC 100%)",
-  },
-  transition: "all 0.3s ease",
-}));
-const BlurBackground = styled("div")({
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background:
-    "url(https://wallpapers.com/images/hd/hotel-background-bppf56oip6k5puj0.jpg) center/cover no-repeat",
-  filter: "blur(5px)",
-  opacity: 0.6,
-  zIndex: 1,
-});
+// Hình ảnh Pizza Boy
+const PIZZA_BOY_IMAGE_URL =
+  "https://png.pngtree.com/png-clipart/20250128/original/pngtree-3d-pizza-boy-running-with-freshly-baked-png-image_20068701.png";
+
+// Background Image URL
+const BACKGROUND_IMAGE_URL =
+  "https://media.istockphoto.com/id/1020383084/vi/anh/n%E1%BB%81n-m%C3%A0u-cam-pastel-gi%E1%BA%A5y-m%E1%BA%ABu-h%C3%ACnh-h%E1%BB%8Dc-kh%C3%A1i-ni%E1%BB%87m-t%C3%B3i-thi%E1%BB%83u-n%E1%BA%B1m-ph%E1%BA%B3ng-t%E1%BA%A7m-nh%C3%ACn-tr%C3%AAn-c%C3%B9ng-gi%E1%BA%A5y-m%C3%A0u.jpg?s=612x612&w=0&k=20&c=qjaGyU2sjZjYJ4_V8JMWhREtOEmVtwRAx3GOh2a8E6k=";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-  const [loading, setLoading] = React.useState(false); // Add loading state
-  const [registrationSuccess, setRegistrationSuccess] = React.useState(false);
-  // Custom messages cho Joi validation
+
   const joiMessages = {
-    "string.empty": "Trường này không được để trống",
-    "string.min": "Phải có ít nhất {#limit} ký tự",
-    "string.email": "Email không hợp lệ",
-    "any.only": "Mật khẩu xác nhận không khớp",
+    "string.empty": "This field is required",
+    "string.min": "Must have at least {#limit} characters",
+    "string.email": "Invalid email format",
+    "any.only": "Passwords do not match",
+    "any.required": "This field is required",
+    "boolean.base": "You must agree to the terms", // Cho agreeTerms
+    "object.unknown": "Field not allowed",
   };
 
-  // Validation Schema
   const validationSchema = Joi.object({
-    username: Joi.string().min(3).required().messages(joiMessages),
-    email: Joi.string().email({ tlds: false }).required().messages(joiMessages),
-    password: Joi.string().min(6).required().messages(joiMessages),
+    // API của bạn dùng 'username' cho tên. Ảnh 1 có 'Full Name'.
+    // Chúng ta sẽ map 'Full Name' của UI vào 'username' của API.
+    username: Joi.string()
+      .min(3)
+      .required()
+      .label("Full Name")
+      .messages(joiMessages),
+    // Ảnh 1 có 'Phone Number', nhưng API hiện tại không có. Tạm thời bỏ qua.
+    // phoneNumber: Joi.string().pattern(/^[0-9]{10,11}$/).required().label("Phone Number").messages({...joiMessages, "string.pattern.base": "Invalid phone number"}),
+    email: Joi.string()
+      .email({ tlds: false })
+      .required()
+      .label("Email")
+      .messages(joiMessages),
+    password: Joi.string()
+      .min(6)
+      .required()
+      .label("Password")
+      .messages(joiMessages),
     confirmPassword: Joi.string()
       .valid(Joi.ref("password"))
       .required()
+      .label("Confirm Password")
+      .messages(joiMessages),
+    agreeTerms: Joi.boolean()
+      .valid(true)
+      .required()
+      .label("Terms agreement")
       .messages(joiMessages),
   });
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      username: "", // For Full Name
       email: "",
       password: "",
       confirmPassword: "",
+      agreeTerms: false,
     },
     validate: (values) => {
       const { error } = validationSchema.validate(values, {
         abortEarly: false,
       });
-      if (error) {
-        console.log("Validation Errors:", error.details);
-      }
-      return error?.details.reduce(
-        (acc, curr) => ({
-          ...acc,
-          [curr.path[0]]: curr.message,
-        }),
-        {}
-      );
+      if (!error) return {};
+      return error.details.reduce((acc, current) => {
+        acc[current.path[0]] = current.message;
+        return acc;
+      }, {});
     },
     onSubmit: async (values) => {
-      setLoading(true); // Set loading to true when form is submitted
+      setLoading(true);
       try {
+        // API endpoint của bạn chỉ nhận username, email, password
+        const apiPayload = {
+          username: values.username, // "Full Name" từ UI
+          email: values.email,
+          password: values.password,
+        };
         const response = await axios.post(
           "http://localhost:9999/api/register/account",
-          values
+          apiPayload
         );
-        console.log("Response:", response);
-        // Kiểm tra nếu đăng ký thành công (giả sử server trả về { success: true })
-        if (response.status) {
-          notifySuccess("Đăng ký thành công!");
-          setRegistrationSuccess(true);
+        if (response.status === 200 || response.status === 201) {
+          // Hoặc các status code thành công khác
+          notifySuccess(
+            "Registration successful! Please check your email to verify."
+          );
+          setRegistrationSuccess(true); // Để chuyển sang màn hình chờ verify
         } else {
           notifyError(
-            "Đăng ký thất bại: " +
-              (response.data.message || "Lỗi không xác định")
+            "Registration failed: " +
+              (response.data?.message || "Unknown error")
           );
         }
       } catch (error) {
-        notifyError(error.response.data.message);
-        console.error(error);
+        notifyError(
+          error.response?.data?.message ||
+            error.message ||
+            "An error occurred during registration."
+        );
+        console.error("Registration error:", error);
       } finally {
-        setLoading(false); // Set loading to false after API call (success or error)
+        setLoading(false);
       }
     },
   });
 
   if (registrationSuccess) {
-    return <VerificationSuccessScreen type="waiting" email="" />; // Render success screen after registration
+    // Chuyển email đã đăng ký sang màn hình success
+    return (
+      <VerificationSuccessScreen type="waiting" email={formik.values.email} />
+    );
   }
-  // Các styles chung cho TextField
-  const textFieldSx = {
-    "& .MuiFormHelperText-root": {
-      minHeight: "1.2rem",
-      transition: "all 0.2s",
-    },
-  };
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
 
   return (
-    <Stack
+    <ThemeProvider theme={pizzaTheme}>
+      <CssBaseline />
+      {loading && <Loading />}
+      <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
-        padding: 2,
-        position: "relative",
+          // Use background image
+          backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+          padding: 2,
+          overflow: "auto",
       }}
     >
-      {loading && <Loading />}
-      <BlurBackground />
-      <Card>
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 700, color: "#2988BC", textAlign: "center", mb: 2 }}
+        <Grid
+          container
+          sx={{
+            bgcolor: "background.paper", // White background for the central box
+            borderRadius: "20px", // Rounded corners for the box
+            boxShadow: "0 15px 35px rgba(0,0,0,0.1)", // Shadow
+            overflow: "hidden", // Hide overflow from rounded corners
+            maxWidth: "900px", // Max width of the central box
+            width: "100%",
+            minHeight: { xs: "auto", md: "500px" }, // Min height, adjust as needed
+          }}
         >
-          Đăng ký tài khoản
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ textAlign: "center", mb: 3, color: "#666" }}
+          {/* Left Side - Image */}
+          <Grid
+            item
+            xs={12}
+            sm={5} // Adjust column ratio if needed (e.g., sm={4} or md={6})
+            sx={{
+              bgcolor: "background.default", // White background for image side
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 2,
+              // Optional: hide image section on very small screens
+              // [theme.breakpoints.down('sm')]: { display: 'none' },
+            }}
+          >
+            <img
+              src={PIZZA_BOY_IMAGE_URL}
+              alt="Illustration"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%", // Use 100% to fit within the Grid item height
+                objectFit: "contain",
+                height: "auto", // Maintain aspect ratio
+              }}
+            />
+          </Grid>
+
+          {/* Right Side - Form */}
+          <Grid
+            item
+            xs={12}
+            sm={7} // Remaining columns for the form
+            sx={{
+              bgcolor: "primary.main", // Orange background for form side
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center", // Center form vertically
+              padding: { xs: 1.5, sm: 3, md: 4 }, // Further reduced padding
+            }}
         >
-          Tạo tài khoản để bắt đầu trải nghiệm dịch vụ của chúng tôi
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                maxWidth: "380px", // Max width for form content within the column
+                gap: 1, // Further reduced gap
+              }}
+            >
+              {/* Lock Icon Avatar */}
+              <Avatar sx={{ bgcolor: "background.paper", m: 0.5 }}>
+                <LockOutlinedIcon color="primary" fontSize="large" />
+              </Avatar>
+
+              {/* Title */}
+        <Typography
+                component="h1"
+                variant="h5"
+                sx={{ color: "text.primary", fontWeight: 700, mb: 0.5 }}
+        >
+                Create Account
         </Typography>
-        <form onSubmit={formik.handleSubmit}>
-          <Box sx={{ display: "grid", gap: 2 }}>
+
+              {/* Form Fields */}
+              {/* Full Name (mapped to username) */}
+              <FormControl fullWidth margin="normal" size="small">
             <TextField
-              fullWidth
-              label="Tên đăng nhập"
+                  id="username"
               name="username"
+                  placeholder="Full Name *"
               value={formik.values.username}
               onChange={formik.handleChange}
-              error={!!formik.errors.username}
-              helperText={formik.errors.username}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">👤</InputAdornment>
-                ),
-                sx: { borderRadius: "8px" },
-              }}
-              sx={textFieldSx}
-            />
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.username && Boolean(formik.errors.username)
+                  }
+                  helperText={formik.touched.username && formik.errors.username}
+                />
+              </FormControl>
+              {/* Phone Number (omitted as per API) */}
+              {/* <TextField fullWidth placeholder="Phone Number *" type="tel" /> */}
+
+              {/* Email */}
+              <FormControl fullWidth margin="normal" size="small">
             <TextField
-              fullWidth
-              label="Email"
+                  id="email"
+                  name="email"
               type="email"
-              name="email"
+                  placeholder="Email *"
               value={formik.values.email}
               onChange={formik.handleChange}
-              error={!!formik.errors.email}
-              helperText={formik.errors.email}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">✉️</InputAdornment>
-                ),
-                sx: { borderRadius: "8px" },
-              }}
-              sx={textFieldSx}
-            />
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                />
+              </FormControl>
+
+              {/* Password */}
+              <FormControl fullWidth margin="normal" size="small">
             <TextField
-              fullWidth
-              label="Mật khẩu"
+                  id="password"
+                  name="password"
               type={showPassword ? "text" : "password"}
-              name="password"
+                  placeholder="Password *"
               value={formik.values.password}
               onChange={formik.handleChange}
-              error={!!formik.errors.password}
-              helperText={formik.errors.password}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={formik.touched.password && formik.errors.password}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">🔒</InputAdornment>
-                ),
                 endAdornment: (
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? "👁️" : "🔍"}
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                          size="small"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
+                      </InputAdornment>
                 ),
-                sx: { borderRadius: "8px" },
               }}
-              sx={textFieldSx}
             />
+              </FormControl>
+
+              {/* Confirm Password */}
+              <FormControl fullWidth margin="normal" size="small">
             <TextField
-              fullWidth
-              label="Xác nhận mật khẩu"
+                  id="confirmPassword"
+                  name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
-              name="confirmPassword"
+                  placeholder="Confirm Password *"
               value={formik.values.confirmPassword}
               onChange={formik.handleChange}
-              error={!!formik.errors.confirmPassword}
-              helperText={formik.errors.confirmPassword}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.confirmPassword &&
+                    Boolean(formik.errors.confirmPassword)
+                  }
+                  helperText={
+                    formik.touched.confirmPassword &&
+                    formik.errors.confirmPassword
+                  }
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">🔒</InputAdornment>
-                ),
                 endAdornment: (
+                      <InputAdornment position="end">
                   <IconButton
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          aria-label="toggle confirm password visibility"
+                          onClick={handleClickShowConfirmPassword}
+                          edge="end"
+                          size="small"
                   >
-                    {showConfirmPassword ? "👁️" : "🔍"}
+                          {showConfirmPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
                   </IconButton>
-                ),
-                sx: { borderRadius: "8px" },
-              }}
-              sx={textFieldSx}
-            />
-            <StyledButton
-              fullWidth
-              variant="contained"
-              size="large"
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
+
+              {/* Terms Checkbox */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="agreeTerms"
+                    checked={formik.values.agreeTerms}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    color="default" // Checkbox color is styled in theme.js MuiCheckbox
+                    size="small" // Reduced checkbox size
+                  />
+                }
+                label={
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "text.secondary", fontSize: "0.8rem" }}
+                  >
+                    I accept the{" "}
+                    <MuiLink
+                      href="#"
+                      sx={{
+                        color: "#FEBDAB",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        fontSize: "0.8rem", // Reduced font size
+                      }}
+                    >
+                      terms of service
+                    </MuiLink>{" "}
+                    and{" "}
+                    <MuiLink
+                      href="#"
               sx={{
-                bgcolor: "#2988BC",
-                "&:hover": { bgcolor: "#1e5f8d" },
-                borderRadius: "8px",
-                py: 1.5,
-                textTransform: "none",
-                fontSize: "1.1rem",
-                mt: 1,
+                        color: "#FEBDAB",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        fontSize: "0.8rem", // Reduced font size
               }}
-              type="submit"
-            >
-              Đăng ký
-            </StyledButton>
-          </Box>
-        </form>
+                    >
+                      privacy policy
+                    </MuiLink>
+                  </Typography>
+                }
+                sx={{ mt: 0.5, mb: formik.errors.agreeTerms ? 0 : 0.5 }} // Further reduced margin
+              />
+              {formik.touched.agreeTerms && formik.errors.agreeTerms && (
         <Typography
-          variant="body2"
-          color="text.secondary"
-          align="center"
-          sx={{ mt: 2 }}
-        >
-          Đã có tài khoản?{" "}
-          <Link
-            href="/login"
-            variant="body2"
-            sx={{ color: "#2988BC", fontWeight: 600 }}
-          >
-            Đăng nhập
-          </Link>
-        </Typography>
-      </Card>
+                  variant="caption"
+                  sx={{
+                    color: "error.main",
+                    display: "block",
+                    mt: 0,
+                    ml: 0.5,
+                    fontSize: "0.7rem", // Reduced font size
+                  }}
+                >
+                  {formik.errors.agreeTerms}
+                </Typography>
+              )}
+
+              {/* Sign Up Button */}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="secondary" // Button color from theme
+                disabled={loading}
+                sx={{ mt: formik.errors.agreeTerms ? 0 : 1, paddingY: 1 }} // Adjusted margin and padding
+              >
+                {loading ? "Processing..." : "SIGN UP"}
+              </Button>
+
+              {/* Sign In Link */}
       <Typography
         variant="body2"
         sx={{
-          position: "absolute",
-          bottom: 20,
-          color: "white",
-          opacity: 0.8,
-          zIndex: 10,
+                  color: "text.secondary",
+                  alignSelf: "center",
+                  mt: 1,
+                  fontSize: "0.8rem",
+                }} // Reduced margin and font size
+              >
+                Already have an account?{" "}
+                <MuiLink
+                  href="/login"
+                  sx={{
+                    color: "#FEBDAB",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    fontSize: "0.8rem", // Reduced font size
         }}
       >
-        © 2024 LuxStay. Tất cả các quyền được bảo lưu.
+                  Sign In
+                </MuiLink>
       </Typography>
-    </Stack>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </ThemeProvider>
   );
 };
 

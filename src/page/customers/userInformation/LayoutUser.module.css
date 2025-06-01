@@ -1,0 +1,224 @@
+/* src/page/customers/userInformation/LayoutUser.module.css */
+.layoutUserContainer {
+  display: flex;
+  flex-direction: row;
+  /* paddingTop đã được HomePage.jsx xử lý cho <main> */
+  /* height không cần thiết ở đây, sẽ theo content và flex-grow của HomePage */
+  background-color: #f4f6f8; /* Màu nền này sẽ là màu nền chung phía sau content */
+}
+
+.userSider {
+  background: #0F172A !important;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  position: sticky !important; /* Sider sẽ dính lại khi layoutUserContainer cuộn */
+  top: 70px !important; /* Dính lại ngay dưới Header chính */
+  height: calc(100vh - 70px); /* Chiếm hết chiều cao viewport dưới Header */
+  /* Quan trọng: Sider phải có chiều cao cố định để sticky hoạt động đúng */
+  /* Nếu content của LayoutUser dài hơn viewport, LayoutUser sẽ cuộn, và Sider dính theo */
+  align-self: flex-start; /* Cần thiết cho sticky trong flex container */
+  overflow-y: auto; /* Cho phép cuộn nội dung menu nếu menu dài hơn Sider */
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+  z-index: 990; /* Đảm bảo Sider không bị che */
+}
+
+.siderHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Căn giữa nút collapse khi Sider thu gọn */
+  padding: 0; /* Bỏ padding nếu chỉ có nút collapse */
+  height: 60px; /* Chiều cao header Sider */
+  flex-shrink: 0;
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.08); */
+}
+/* Khi Sider mở rộng, nút collapse có thể đẩy sang phải */
+.userSider:not(.ant-layout-sider-collapsed) .siderHeader {
+  justify-content: flex-end;
+  padding-right: 10px; /* Padding cho nút collapse */
+}
+.siderLogo { /* Nếu bạn có logo */
+  height: 30px;
+  margin: 0 auto 0 16px; /* Căn trái logo, đẩy nút collapse sang phải */
+  transition: opacity 0.2s, margin-left 0.2s;
+}
+.siderCollapsed .siderLogo {
+  opacity: 0;
+  pointer-events: none;
+  margin-left: -100px;
+}
+
+.collapseButton { /* Nút collapse/expand ở header của Sider */
+  color: #94a3b8 !important;
+  font-size: 16px !important;
+  background: transparent !important;
+  border: none !important;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.collapseButton:hover {
+  color: #e2e8f0 !important;
+  background-color: rgba(255,255,255,0.05) !important;
+  border-radius: 4px;
+}
+
+.userMenu { /* Menu chính */
+  flex-grow: 1; /* Quan trọng: Để menu chính chiếm không gian còn lại */
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: transparent !important;
+  border-right: none !important;
+  padding: 10px 0; /* Padding trên dưới cho khối menu */
+}
+.userMenu::-webkit-scrollbar { width: 4px; }
+.userMenu::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 2px;}
+.userMenu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px;}
+
+.userMenu :global(.ant-menu-item),
+.userMenu :global(.ant-menu-submenu-title) {
+  margin: 4px 10px !important; /* Margin cho item */
+  width: calc(100% - 20px) !important; /* Chiều rộng item */
+  height: 44px !important;
+  line-height: 44px !important;
+  font-size: 14px;
+  font-weight: 500;
+  color: #cbd5e1 !important; /* Màu chữ sáng hơn, dễ đọc hơn trên nền tối */
+  padding: 0 16px !important; /* Padding bên trong item */
+  border-radius: 6px !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.userMenu :global(.ant-menu-item .anticon),
+.userMenu :global(.ant-menu-submenu-title .anticon) {
+  font-size: 16px;
+  margin-right: 12px !important;
+  color: #cbd5e1; /* Màu icon giống text */
+  transition: color 0.15s ease;
+}
+
+.userMenu :global(.ant-menu-item-selected) {
+  background-color: #ffffff !important; /* Nền trắng khi active */
+  color: #0F172A !important; /* Chữ màu nền sider khi active */
+  font-weight: 600 !important;
+}
+.userMenu :global(.ant-menu-item-selected .anticon) {
+  color: #0F172A !important;
+}
+.userMenu :global(.ant-menu-item:not(.ant-menu-item-selected)):hover {
+  background-color: rgba(255, 255, 255, 0.08) !important; /* Nền nhạt hơn khi hover */
+  color: #ffffff !important; /* Sáng hơn khi hover */
+}
+.userMenu :global(.ant-menu-item:not(.ant-menu-item-selected)):hover .anticon {
+  color: #ffffff !important;
+}
+
+/* Ẩn label khi Sider collapsed */
+.userSider:global(.ant-layout-sider-collapsed) .userMenu :global(.ant-menu-title-content),
+.userSider:global(.ant-layout-sider-collapsed) .userMenuFooter :global(.ant-menu-title-content) {
+  display: none !important;
+}
+/* Căn giữa icon khi Sider collapsed */
+.userSider:global(.ant-layout-sider-collapsed) .userMenu :global(.ant-menu-item),
+.userSider:global(.ant-layout-sider-collapsed) .userMenuFooter :global(.ant-menu-item) {
+  padding: 0 !important; display:flex; align-items:center; justify-content:center;
+}
+.userSider:global(.ant-layout-sider-collapsed) .userMenu :global(.ant-menu-item .anticon),
+.userSider:global(.ant-layout-sider-collapsed) .userMenuFooter :global(.ant-menu-item .anticon) {
+  margin-right: 0 !important; font-size: 18px;
+}
+
+.siderFooter {
+  padding: 0; /* Bỏ padding nếu userProfileSider và menu footer đã có */
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0; /* Quan trọng để footer không bị co lại */
+  margin-top: auto; /* Đẩy footer xuống dưới cùng */
+}
+.userMenuFooter { /* Menu cho settings, logout */
+  background: transparent !important;
+  border-right: none !important;
+  padding: 8px 0; /* Padding trên dưới cho khối menu footer */
+}
+.userMenuFooter :global(.ant-menu-item) { /* Style giống menu chính */
+  color: #cbd5e1 !important;
+  height: 42px !important; line-height: 42px !important; font-size: 14px;
+  margin: 2px 10px !important; width: calc(100% - 20px) !important;
+  padding: 0 16px !important; border-radius: 6px !important;
+}
+.userMenuFooter :global(.ant-menu-item:hover) {
+  color: #ffffff !important; background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.userMenuFooter :global(.ant-menu-item .anticon) { font-size: 16px; margin-right: 12px !important; }
+
+
+.userProfileSider { /* Phần hiển thị thông tin user ở cuối Sider */
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* Thêm đường kẻ nếu menu footer ở trên */
+}
+.siderUserAvatar {
+  /* Style cho avatar nếu cần */
+}
+.siderUsername {
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.9em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 120px; /* Giới hạn chiều rộng username */
+}
+
+/* Nút collapse/expand nằm ở dưới cùng Sider Footer */
+.siderCollapseTriggerContainer {
+    display: flex;
+    justify-content: flex-end; /* Hoặc center nếu muốn ở giữa */
+    padding: 8px 10px; /* Padding cho nút */
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.collapseButtonBottom {
+    color: #8892b0 !important;
+    font-size: 16px !important;
+    background: transparent !important;
+    border: none !important;
+}
+.collapseButtonBottom:hover {
+    color: #ccd6f6 !important;
+}
+.siderCollapsed .collapseButtonBottom {
+    width: 100%;
+    justify-content: center;
+}
+
+
+.userMainContentArea {
+  transition: margin-left 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  background-color: transparent; /* Để nền của .layoutUserContainer hiển thị */
+  flex-grow: 1; /* Quan trọng: Cho phép content chính chiếm hết phần còn lại */
+  padding: 20px; /* Padding cho toàn bộ vùng content bên phải Sider */
+  /* BỎ overflow-y: auto; và height: calc(100vh - 70px); ở đây */
+  /* Việc cuộn sẽ do trình duyệt quản lý cho toàn bộ trang */
+}
+
+.actualPageContent {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  /* min-height không cần thiết nếu HomePage đã set min-height cho outlet container */
+}
+
+/* Tooltip cho menu item khi collapsed */
+:global(.ant-tooltip-placement-right .ant-tooltip-arrow::before) {
+  background-color: #112240 !important;
+}
+:global(.ant-tooltip-inner) {
+  background-color: #112240 !important;
+  color: #a8b2d1 !important;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}

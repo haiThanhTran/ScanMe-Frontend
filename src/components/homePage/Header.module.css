@@ -1,0 +1,194 @@
+/* src/components/layout/Header.module.css */
+.appHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 70px;
+    transition: transform 0.35s ease-in-out, background-color 0.35s ease-in-out, box-shadow 0.35s ease-in-out;
+    display: flex;
+    justify-content: center;
+    background-color: #Ffff  !important; /* NỀN MẶC ĐỊNH LÀ MÀU XÁM NHẠT */
+  }
+  
+  .appHeader.hidden {
+    transform: translateY(-105%);
+  }
+  .appHeader.visible {
+    transform: translateY(0);
+  }
+  
+  .headerMaxWidthContainer {
+    /* background-color: #F5F5F5 !important; */
+    width: 100%;
+    max-width: 1200px; /* Chiều rộng tối đa cố định cho nội dung */
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* transition không cần cho container này nữa nếu chỉ thay đổi padding của content */
+    background-color: inherit; /* Luôn kế thừa background từ .appHeader */
+    padding: 0 30px; /* Padding cố định cho hai bên giống AIA */
+  }
+  
+  .headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    /* Không cần padding ở đây nữa, đã có ở headerMaxWidthContainer */
+  }
+  /* src/components/homePage/HomePage.module.css */
+.homePageWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Đảm bảo toàn bộ trang chiếm ít nhất chiều cao màn hình */
+}
+
+.outletContent {
+  flex-grow: 1; /* Cho phép Outlet (nội dung chính) co giãn để đẩy Footer xuống */
+  /* paddingTop sẽ được set inline từ JS */
+  background-color: #f0f2f5; /* Màu nền chung cho các trang con nếu muốn */
+}
+  /* Trạng thái "khuyết" (khi ở top bất kể trang nào) */
+  .appHeader.undocked {
+    background-color: #Ffff !important;
+    box-shadow: none !important;
+  }
+  .appHeader.undocked .headerMaxWidthContainer {
+    /* Khi undocked, phần nền mờ sẽ là của chính headerMaxWidthContainer */
+    background-color: #834848; /* Nền mờ tối */
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+  }
+  
+  /* Trạng thái "lấp đầy" (khi cuộn) */
+  .appHeader.docked {
+    background-color: #F5F5F5 !important; /* Màu nền xám nhạt khi lấp đầy */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+  .appHeader.docked .headerMaxWidthContainer {
+    border-radius: 0; /* Bỏ bo tròn */
+    background-color: #F5F5F5; /* Để màu nền của .appHeader.docked hiện ra */
+  }
+  
+  
+  .leftSection { display: flex; align-items: center; }
+  .logoContainer { display: flex; align-items: center; cursor: pointer; margin-right: 30px; }
+  .logo { height: 38px; object-fit: contain; }
+  .mainNav { display: flex; align-items: center; height: 100%; }
+  
+  .menuItem {
+    position: relative; background: none !important; box-shadow: none !important;
+    font-family: 'Arial', sans-serif; font-weight: 700 !important; font-size: 14px !important;
+    padding: 0 15px !important; height: 100% !important;
+    display: flex !important; align-items: center !important;
+    border: none !important; border-radius: 0 !important;
+    transition: color 0.2s ease-in-out; line-height: normal !important;
+  }
+  
+.menuItem::after {
+    content: '';
+    position: absolute;
+    left: 8px; /* Bắt đầu từ vị trí padding của menuItem */
+    right: 8px; /* Kết thúc ở vị trí padding của menuItem */
+    /* HOẶC CÁCH KHÁC:
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; // Sẽ animate width từ 0 đến calc(100% - 16px) ví dụ
+    */
+    bottom: -10px; /* ĐẶT GẠCH CHÂN Ở DƯỚI CÙNG CỦA menuItem */
+    height: 2.5px; /* Độ dày của gạch chân */
+    background-color: transparent; /* Màu ban đầu, sẽ được đổi khi active/hover */
+    transform-origin: left; /* Cho animation trượt từ trái */
+    transform: scaleX(0); /* Ban đầu ẩn đi bằng cách co theo chiều X */
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.3s ease-in-out;
+    border-radius: 1px;
+  }
+
+  .menuItem:hover::after,
+.menuItem.active::after {
+  transform: scaleX(1); /* Hiện ra bằng cách mở rộng theo chiều X */
+  /* Màu gạch chân sẽ được quyết định bởi các class cha .appHeader.docked hoặc .appHeader.undocked */
+}
+  
+  /* Màu chữ và gạch chân cho trạng thái docked (nền sáng) */
+  .appHeader.docked .menuItem:hover::after,
+  .appHeader.docked .menuItem.active::after {
+    background-color: #D9232D; /* Màu đỏ */
+  }
+  
+  /* Màu gạch chân khi active/hover cho trạng thái undocked (nền tối/trong suốt) */
+  .appHeader.undocked .menuItem:hover::after,
+  .appHeader.undocked .menuItem.active::after {
+    background-color: #FFFFFF; /* Màu trắng */
+  }
+  
+  .rightSection { display: flex; align-items: center; }
+  .userActions { display: flex; align-items: center; gap: 10px; }
+  
+  .userDropdownToggle {
+    display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+    border-radius: 18px; transition: background-color 0.2s ease; cursor: pointer; font-size: 14px;
+  }
+  .textDark { color: #333333 !important; }
+  .textLight { color: #FFFFFF !important; }
+  
+  .appHeader.docked .userDropdownToggle { color: #333333 !important; }
+  .appHeader.undocked .userDropdownToggle { color: #FFFFFF !important; }
+  
+  .appHeader.docked .userDropdownToggle:hover { background-color: rgba(0,0,0,0.04); }
+  .appHeader.undocked .userDropdownToggle:hover { background-color: rgba(255,255,255,0.1); }
+  
+  /* Style cho tên user trong dropdown header */
+  .dropdownUserHeader :global(.ant-dropdown-menu-item-group-title) {
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+    font-size: 1em !important;
+    color: #333 !important;
+    cursor: default !important;
+  }
+  .dropdownUserHeader :global(.ant-dropdown-menu-item-group-title):hover {
+    background-color: transparent !important;
+  }
+  
+  
+  .userDropdownOverlay :global(.ant-dropdown-menu) {
+    padding: 4px 0 !important; border-radius: 6px !important;
+    box-shadow: 0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08), 0 9px 28px 8px rgba(0,0,0,.05) !important;
+  }
+  .userDropdownOverlay :global(.ant-dropdown-menu-item),
+  .userDropdownOverlay :global(.ant-dropdown-menu-submenu-title) {
+    padding: 6px 12px !important; font-size: 14px;
+  }
+  .userDropdownOverlay :global(.ant-dropdown-menu-item-icon) { margin-right: 8px !important; font-size: 1em; }
+  
+  .headerButton {
+    font-family: 'Arial', sans-serif; font-weight: bold !important; border-radius: 999px !important;
+    padding: 0 20px !important; font-size: 13px !important; height: 36px !important;
+    line-height: 34px !important; display: inline-flex !important; align-items: center; justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    border: 1.5px solid transparent !important;
+  }
+  
+  .aiaPlusButton {
+    background-color: transparent !important; border-width: 1.5px !important; border-style: solid !important;
+  }
+  .appHeader.docked .aiaPlusButton { color: #D9232D !important; border-color: #D9232D !important; }
+  .appHeader.docked .aiaPlusButton:hover { background-color: rgba(217, 35, 45, 0.05) !important; }
+  .appHeader.undocked .aiaPlusButton { color: #FFFFFF !important; border-color: #FFFFFF !important; }
+  .appHeader.undocked .aiaPlusButton:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
+  
+  .contactButton {
+      background-color: #D9232D !important; border-color: #D9232D !important; color: white !important;
+  }
+  .contactButton:hover { background-color: #c31e29 !important; border-color: #c31e29 !important; }
+  .appHeader.undocked .contactButton {
+      background-color: #D9232D !important; border-color: #D9232D !important; color: white !important;
+  }
+  .appHeader.undocked .contactButton:hover {
+      background-color: #c31e29 !important; border-color: #c31e29 !important;
+  }

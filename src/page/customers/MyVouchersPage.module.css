@@ -1,0 +1,105 @@
+/* src/static/css/MyVouchersPage.module.css */
+.myVouchersLayout {
+    background: #f0f2f5;
+  }
+  
+  .myVouchersContent {
+    margin: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  
+  .pageTitle {
+    margin-bottom: 20px !important;
+    color: #1f1f1f;
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+  }
+  .pageTitle svg {
+    margin-right: 12px;
+    font-size: 1.3em;
+    color: #1890ff; /* Hoặc màu khác tùy theme */
+  }
+  
+  .cardContainer {
+    border-radius: 8px;
+    padding: 16px;
+  }
+  
+  .voucherTabs :global(.ant-tabs-nav) {
+    margin-bottom: 0px !important;
+  }
+  .voucherTabs :global(.ant-tabs-tab) {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    margin: 0 4px 0 0 !important;
+  }
+  .voucherTabs :global(.ant-tabs-tab-active .ant-tabs-tab-btn){
+    color: #1890ff;
+    font-weight: 500;
+  }
+  
+  .vouchersTable :global(th) {
+    background-color: #fafafa !important;
+    font-weight: 600 !important;
+    color: #333;
+    padding: 12px 8px !important;
+  }
+  
+  .vouchersTable :global(.ant-table-tbody > tr > td) {
+    vertical-align: middle;
+    padding: 10px 8px !important; /* Giảm padding một chút */
+    font-size: 0.9em;
+  }
+  .vouchersTable :global(.ant-table-tbody > tr:hover > td) {
+    background: #f9f9f9 !important;
+  }
+  
+  .voucherInfoCell {
+    max-width: 300px; /* Giới hạn chiều rộng để ellipsis hoạt động tốt hơn */
+  }
+  .voucherInfoCell :global(.ant-typography-ellipsis-single-line),
+  .voucherInfoCell :global(.ant-typography-ellipsis) {
+    margin-bottom: 4px !important; /* Giảm khoảng cách dưới cho description */
+  }
+  .voucherInfoCell :global(.ant-typography-secondary) {
+    font-size: 0.9em; /* Nhỏ hơn một chút cho tên store */
+  }
+  
+  
+  /* --- CSS cho Modal chi tiết --- */
+  .detailModal :global(.ant-modal-header) {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  .detailModal :global(.ant-modal-title .ant-typography) {
+    color: #333;
+  }
+  .detailModal :global(.ant-modal-title svg) {
+    color: #1890ff;
+  }
+  
+  .detailModal :global(.ant-modal-body) {
+    padding: 0;
+  }
+  
+  .modalBodyContent {
+    max-height: 75vh; /* Tăng chiều cao tối đa cho modal body */
+    overflow-y: auto;
+    padding: 24px;
+  }
+  
+  .detailModal :global(.ant-descriptions-item-label) {
+    font-weight: 500;
+    color: #555;
+    background-color: #fafafa;
+    width: 160px; /* Điều chỉnh độ rộng label */
+  }
+  .detailModal :global(.ant-descriptions-item-content) {
+    word-break: break-word;
+  }
+  
+  /* Thêm style nếu cần cho các phần khác trong modal */

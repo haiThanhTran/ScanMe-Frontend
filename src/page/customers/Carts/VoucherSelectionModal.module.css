@@ -1,0 +1,207 @@
+/* src/components/cart/VoucherSelectionModal.module.css */
+.voucherModal :global(.ant-modal-content) {
+  border-radius: 12px; /* Bo tròn hơn */
+}
+.voucherModal :global(.ant-modal-header) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 18px 24px; /* Tăng padding */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  background-color: #fafafa; /* Màu nền nhẹ cho header */
+}
+.voucherModal :global(.ant-modal-title .ant-typography) {
+  font-size: 1.2rem; /* Tăng kích thước tiêu đề */
+  font-weight: 500;
+}
+.voucherModal :global(.ant-modal-title svg) {
+  margin-right: 10px;
+  color: #1677ff; /* Màu icon AntD primary */
+}
+
+.voucherModal :global(.ant-modal-body) {
+  max-height: calc(65vh - 120px); /* Điều chỉnh max-height */
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+
+.voucherModal :global(.ant-modal-footer) {
+  border-top: 1px solid #f0f0f0;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.footerInfo {
+  margin-right: auto;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+}
+.footerInfo svg {
+  margin-right: 6px;
+  font-size: 1.1em;
+}
+
+.actionButton {
+  min-width: 90px; /* Tăng chiều rộng nút */
+  border-radius: 6px; /* Bo tròn nút */
+}
+
+.voucherItem {
+  padding: 16px 8px !important; /* Điều chỉnh padding item */
+  border-bottom: 1px solid #f0f0f0 !important; /* Đường kẻ rõ hơn */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 10px; /* Khoảng cách giữa các item */
+  background-color: #fff;
+  position: relative; /* Cho pseudo-elements nếu cần */
+}
+.voucherItem:last-child {
+  border-bottom: 1px solid #f0f0f0 !important; /* Vẫn giữ border cho item cuối */
+  /* Hoặc nếu không muốn border item cuối thì: border-bottom: none !important; */
+}
+.voucherItem:hover {
+  background-color: #f7faff; /* Màu hover nhẹ nhàng */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.voucherContent {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-left: 0; /* Radio sẽ nằm ngoài, không đẩy content */
+}
+
+.voucherTag {
+  font-size: 0.75em; /* Nhỏ hơn một chút */
+  font-weight: bold;
+  padding: 5px 10px; /* Tăng padding của tag */
+  margin-right: 16px; /* Tăng khoảng cách */
+  flex-shrink: 0;
+  height: fit-content;
+  border-radius: 4px;
+  text-transform: uppercase; /* Viết hoa chữ trên tag */
+  line-height: 1;
+  margin-top: 3px; /* Căn chỉnh với dòng đầu của details */
+}
+
+.voucherDetails {
+  flex-grow: 1; /* Cho details chiếm hết không gian còn lại */
+  display: flex;
+  flex-direction: column;
+  /* QUAN TRỌNG: Đảm bảo overflow: hidden để ellipsis hoạt động */
+  overflow: hidden;
+  /* Nếu bạn muốn an toàn hơn, có thể thêm min-width: 0;
+     để ngăn flex item bị đẩy ra ngoài trong một số trường hợp phức tạp,
+     nhưng thường thì overflow: hidden là đủ. */
+  min-width: 0;
+}
+
+.voucherCode {
+  font-size: 1.05em; /* To hơn một chút */
+  font-weight: 600; /* Đậm hơn */
+  color: #262626;
+  margin-bottom: 0 !important;
+  line-height: 1.3;
+}
+
+.voucherDescriptionText {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 4px !important;
+  line-height: 1.3;
+  /*
+    BỎ các thuộc tính sau NẾU CÓ, vì AntD Paragraph với prop ellipsis sẽ tự xử lý:
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden; (overflow:hidden nên đặt ở thẻ cha .voucherDetails)
+  */
+}
+
+.savingsText {
+  font-size: 0.9em;
+  font-weight: 500; /* Đậm vừa */
+  margin-bottom: 3px !important;
+}
+
+/* Dùng cho HSD khi không có thanh progress */
+.expiryTextInfoOnly {
+  font-size: 0.8em !important;
+  color: #8c8c8c !important;
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+}
+.expiryTextInfoOnly svg {
+  margin-right: 5px;
+}
+
+
+.reasonText {
+  font-size: 0.85em !important;
+  margin-top: 4px !important;
+  color: #ff4d4f;
+  font-weight: 500;
+}
+
+.disabledVoucher {
+  background-color: #fafafa !important; /* Nền xám hơn */
+  cursor: not-allowed !important;
+  opacity: 0.7; /* Làm mờ đi một chút */
+}
+.disabledVoucher .voucherCode,
+.disabledVoucher .voucherDescriptionText,
+.disabledVoucher .expiryTextInfoOnly {
+  color: #bfbfbf !important; /* Màu chữ xám hơn */
+  text-decoration: none; /* Bỏ gạch ngang mặc định, lý do đã đủ rõ */
+}
+.disabledVoucher .voucherTag {
+  background-color: #f5f5f5 !important;
+  color: #bfbfbf !important;
+  border-color: #d9d9d9 !important;
+}
+.disabledVoucher .savingsText {
+    display: none; /* Ẩn text tiết kiệm nếu voucher không hợp lệ */
+}
+
+
+/* CSS cho thanh tiến trình và thông tin sử dụng */
+.usageInfoContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 6px; /* Tăng khoảng cách */
+  gap: 10px; /* Tăng khoảng cách giữa các phần tử */
+  padding: 4px 0; /* Thêm padding nhẹ */
+  border-top: 1px solid #f5f5f5; /* Đường kẻ mỏng phía trên */
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.usageProgress {
+  flex-basis: 120px; /* Đặt chiều rộng cơ sở cho thanh progress */
+  flex-grow: 0; /* Không cho nó co giãn quá nhiều */
+  margin-right: 0; /* Bỏ margin-right vì đã dùng gap */
+}
+
+.usageText {
+  font-size: 0.8em; /* Tăng kích thước chữ */
+  color: #434343; /* Màu đậm hơn */
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* expiryText dùng chung cho thông tin thời gian còn lại */
+.usageInfoContainer .expiryText {
+  font-size: 0.8em !important; /* Tăng kích thước chữ */
+  color: #434343 !important; /* Màu đậm hơn */
+  margin-top: 0 !important;
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Đẩy sang phải cùng */
+}
+.usageInfoContainer .expiryText svg {
+  margin-right: 5px;
+  color: #8c8c8c; /* Màu icon nhạt hơn */
+}

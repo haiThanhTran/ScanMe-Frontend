@@ -1,0 +1,13 @@
+/* src/components/homePage/HomePage.module.css */
+.homePageWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.outletContent {
+  flex-grow: 1; /* Quan trọng: Cho phép content chính co giãn */
+  /* paddingTop sẽ được set inline */
+  /* Không đặt overflow ở đây, để trình duyệt tự xử lý scroll cho toàn bộ trang nếu cần */
+  background-color: #f0f2f5; /* Màu nền chung cho content */
+}

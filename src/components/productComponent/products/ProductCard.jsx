@@ -1,14 +1,39 @@
 import React from "react";
-import { Card, Typography, Button, Space, Tag } from "antd";
+import { Card, Typography, Button, Space, Tag, message } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import fetchUtils from "../../../utils/fetchUtils";
 import "../../../static/css/styles.css"; // Import styles
 
 const { Title, Text } = Typography;
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
-  const storeName = product?.store?.name || "Cửa hàng không xác định";
+  const storeName = product?.storeId?.name || "Cửa hàng không xác định";
+
+  const handleAddToCart = async (e) => {
+    e.stopPropagation();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      message.warning("Vui lòng đăng nhập để sử dụng giỏ hàng!");
+      navigate("/login");
+      return;
+    }
+    try {
+      const res = await fetchUtils.post(
+        "/user/carts/cart",
+        { productId: product._id, quantity: 1 },
+        true
+      );
+      if (res.success) {
+        message.success("Đã thêm vào giỏ hàng!");
+      } else {
+        message.error(res.message || "Thêm vào giỏ hàng thất bại!");
+      }
+    } catch (error) {
+      message.error("Lỗi khi thêm vào giỏ hàng!");
+    }
+  };
 
   const handleClick = () => {
     navigate(`/products/${product._id}`);
@@ -80,15 +105,15 @@ const ProductCard = ({ product }) => {
         {product.discountedPrice ? (
           <Space size={4}>
             <Text delete className="original-price">
-              {`$${product.price?.toLocaleString()}`}
+              {`${product.price?.toLocaleString("vi-VN")} đ`}
             </Text>
             <Text strong type="danger" className="discounted-price">
-              {`$${product.discountedPrice?.toLocaleString()}`}
+              {`${product.discountedPrice?.toLocaleString("vi-VN")} đ`}
             </Text>
           </Space>
         ) : (
           <Text strong className="price">
-            {`$${product.price?.toLocaleString()}`}
+            {`${product.price?.toLocaleString("vi-VN")} đ`}
           </Text>
         )}
       </div>
@@ -98,7 +123,7 @@ const ProductCard = ({ product }) => {
           type="primary"
           icon={<ShoppingCartOutlined />}
           block
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleAddToCart}
           style={{
             background: "#ff7800",
             border: "none",
