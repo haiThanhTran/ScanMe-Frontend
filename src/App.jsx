@@ -15,6 +15,7 @@ import Profile from "./page/customers/Profile.jsx";
 import ProductsPage from "./page/ProductPages/ProductsPage.jsx";
 import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
 import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
+import FAQPage from "./components/homePage/faqPage.jsx"; // Import FAQPage
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="vouchers" element={<VouchersPage />} />
+            <Route path="faq" element={<FAQPage />} /> {/* Added FAQ route */}
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
