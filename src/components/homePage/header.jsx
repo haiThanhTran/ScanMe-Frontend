@@ -13,7 +13,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { notifySuccess } from "../../components/notification/ToastNotification.jsx";
 import styles from "./Header.module.css";
 
-const { Header: AntHeader } = Layout;
+import { Layout, Button, Menu, Space, Dropdown, Avatar } from "antd"
+import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons"
+import { useNavigate, useLocation } from "react-router-dom"
+import { notifySuccess } from "../../components/notification/ToastNotification.jsx"
+import authService from "../../services/AuthService.jsx"
+import { useState, useEffect } from "react"
+
+const { Header: AntHeader } = Layout
 
 function Header() {
   const navigate = useNavigate();
@@ -104,7 +111,7 @@ function Header() {
       case "logout": handleLogout(); break;
       default: break;
     }
-  };
+  }
 
   const userMenuItems = [
     {
@@ -135,79 +142,150 @@ function Header() {
   ].join(" ");
 
   return (
-    <AntHeader ref={headerRef} className={headerClasses}>
-      <div className={styles.headerMaxWidthContainer}>
-        <div className={styles.headerContent}>
-          <div className={styles.leftSection}>
-            <div className={styles.logoContainer} onClick={() => navigate("/")}>
-              <img
-                src="https://www.dinkel.shop/media/7c/17/5c/1688390963/sale-cart.png"
-                alt="Logo"
-                className={styles.logo}
-              />
-            </div>
-            <nav className={styles.mainNav}>
-              {mainMenuItems.map((item) => {
-                const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== "/");
-                let linkColor = isDocked ? (isActive ? "#D9232D" : "#333333") : (isActive ? "#FFFFFF" : "#E0E0E0");
-
-                return (
-                  <Button
-                    key={item.path}
-                    type="text"
-                    className={`${styles.menuItem} ${isActive ? styles.active : ""}`}
-                    style={{ color: linkColor }}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <span className={styles.menuItemUnderline}></span>
-                    {item.label}
-                  </Button>
-                );
-              })}
-            </nav>
-          </div>
-
-          <div className={styles.rightSection}>
-            {isLoggedIn && user ? (
-              <Dropdown
-                menu={{ items: userMenuItems, onClick: handleMenuClick }}
-                placement="bottomRight"
-                trigger={["hover"]} // ĐỔI THÀNH HOVER
-                overlayClassName={styles.userDropdownOverlay}
-              >
-                {/* Bỏ span username ở đây, nó sẽ nằm trong dropdown menu */}
-                <Space className={`${styles.userDropdownToggle} ${isDocked ? styles.textDark : styles.textLight}`}>
-                  <Avatar
-                      icon={<UserOutlined />}
-                      size="default" // To hơn chút
-                      style={{
-                          backgroundColor: isDocked ? '#FFF1F0' : 'rgba(255,255,255,0.3)',
-                          color: isDocked ? '#D9232D' : '#fff'
-                      }}
-                  />
-                   {/* <DownOutlined style={{fontSize: '10px'}} /> Bỏ down arrow nếu không muốn */}
-                </Space>
-              </Dropdown>
-            ) : (
-              <Space size="small">
-                  <Button className={`${styles.headerButton} ${styles.aiaPlusButton} ${!isDocked ? styles.buttonHomeUndocked : ""}`}>
-                      AIA+
-                  </Button>
-                  <Button
-                    type="primary"
-                    danger
-                    className={`${styles.headerButton} ${styles.contactButton}`}
-                    onClick={() => navigate("/register")}
-                  >
-                    Liên hệ
-                  </Button>
-              </Space>
-            )}
-          </div>
+    <>
+      <style>
+        {`
+          .header-container {
+            background: #fff;
+            transition: box-shadow 0.3s;
+          }
+          .header-container.scrolled {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          }
+        `}
+      </style>
+      <AntHeader
+        className={`header-container${isScrolled ? " scrolled" : ""}`}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          zIndex: 1000,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "0 32px",
+          height: 64,
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Left: Logo */}
+        <div style={{ display: "flex", alignItems: "center", height: "auto" }}>
+          <img
+            onClick={() => navigate("/")}
+            src="./logoreal.svg"
+            alt="logo"
+            style={{
+              height: "56px",
+              width: "auto",
+              objectFit: "contain",
+              marginRight: "4px",
+              cursor: "pointer"
+            }}
+          />
+          <span style={{ fontSize: "20px", fontWeight: "bold", color: "red" }}>
+            ScanMe
+          </span>
         </div>
-      </div>
-    </AntHeader>
-  );
+
+
+
+        {/* Center: Menu */}
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          {menuItems.map((item) => (
+            <Button
+              key={item.path}
+              type="link"
+              style={{
+                color:
+                  location.pathname === item.path || (item.path === "/" && location.pathname === "/")
+                    ? "#e61e43"
+                    : "#222",
+                fontWeight: 500,
+                fontSize: 15,
+                borderBottom:
+                  location.pathname === item.path || (item.path === "/" && location.pathname === "/")
+                    ? "2px solid #e61e43"
+                    : "none",
+                background: "none",
+                padding: "0 4px",
+                margin: 0,
+                borderRadius: 0,
+                transition: "color 0.3s, border-bottom 0.3s",
+                fontFamily: "Inter, Roboto, Arial, sans-serif",
+              }}
+              onClick={() => navigate(item.path)}
+              onMouseOver={(e) => (e.currentTarget.style.color = "#e61e43")}
+              onMouseOut={(e) =>
+              (e.currentTarget.style.color =
+                location.pathname === item.path || (item.path === "/" && location.pathname === "/")
+                  ? "#e61e43"
+                  : "#222")
+              }
+            >
+              {item.label}
+            </Button>
+          ))}
+        </div>
+        {/* Right: User actions */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            minWidth: 180,
+            justifyContent: "flex-end",
+          }}
+        >
+          {isLoggedIn ? (
+            <Dropdown overlay={userMenu} placement="bottomRight">
+              <Space style={{ cursor: "pointer" }}>
+                <Avatar icon={<UserOutlined />} />
+                <span>{user?.username}</span>
+                <DownOutlined />
+              </Space>
+            </Dropdown>
+          ) : (
+            <>
+              <Button
+                style={{
+                  border: "none",
+                  color: "#e61e43",
+                  fontWeight: 600,
+                  fontSize: 15,
+                }}
+                onClick={() => navigate("/login")}
+              >
+                Đăng nhập
+              </Button>
+              <Button
+                style={{
+                  backgroundColor: "#e61e43",
+                  border: "none",
+                  color: "white",
+                  fontWeight: 600,
+                  fontSize: 15,
+                  minWidth: 100,
+                  padding: "0 12px",
+                }}
+                onClick={() => navigate("/register")}
+              >
+                Đăng ký
+              </Button>
+            </>
+          )}
+        </div>
+      </AntHeader>
+    </>
+  )
 }
 
-export default Header;
+export default Header
