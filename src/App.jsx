@@ -15,13 +15,10 @@ import Profile from "./page/customers/ProfilePage.jsx";
 import ProductsPage from "./page/ProductPages/ProductsPage.jsx";
 import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
 import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
-<<<<<<< HEAD
 import MyVouchersPage from "./page/customers/MyVouchersPage.jsx";
 import OrderHistoryPage from "./page/customers/OrderHistoryPage.jsx";
 import ScrollToTop from "./utils/ScrollToTop.jsx"; // <<<<<< IMPORT COMPONENT MỚI
-=======
 import FAQPage from "./components/homePage/faqPage.jsx"; // Import FAQPage
->>>>>>> feat/landingPageV2
 
 function App() {
   return (
@@ -35,12 +32,9 @@ function App() {
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="vouchers" element={<VouchersPage />} />
-<<<<<<< HEAD
             {/* <Route path="orders" element={<OrderHistoryPage />} /> */}
             <Route path="information/*" element={<LayoutUser />} />
-=======
             <Route path="faq" element={<FAQPage />} /> {/* Added FAQ route */}
->>>>>>> feat/landingPageV2
           </Route>
             
           <Route path="/login" element={<Login />} />

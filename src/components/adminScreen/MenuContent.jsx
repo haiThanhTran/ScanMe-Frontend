@@ -1,37 +1,42 @@
-
-
-import * as React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
-import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
-import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
-import RouterIcon from '@mui/icons-material/Router';
-import {useLocation} from "react-router-dom";
+import * as React from "react";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Stack from "@mui/material/Stack";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded";
+import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
+import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
+import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
+import BookOnlineIcon from "@mui/icons-material/BookOnline";
+import RouterIcon from "@mui/icons-material/Router";
+import { useLocation } from "react-router-dom";
 import BedroomChildIcon from "@mui/icons-material/BedroomChild";
 import BedIcon from "@mui/icons-material/Bed";
-import DiscountIcon from '@mui/icons-material/Discount';
+import DiscountIcon from "@mui/icons-material/Discount";
 
 const mainListItems = [
-    {text: 'Trang chủ', icon: <HomeRoundedIcon/>, path: "homeAdmin"},
-    {text: 'Thống kê request', icon: <AnalyticsRoundedIcon/>, path: "logRequest"},
-    {text: 'Quản trị người dùng', icon: <PeopleRoundedIcon/>, path: "manageUser"},
-    {text: 'Quản trị quyền', icon: <AssignmentRoundedIcon/>, path: "manageRole"},
-    {text: 'Quản lý đặt phòng', icon: <BookOnlineIcon/>, path: "bookingManagement"},
-    {text: 'Quản lý router', icon: <RouterIcon/>, path: "routeManagement"},
-  { text: "Quản lý phòng ở", icon: <BedroomChildIcon />, path: "manageRoom" },
-  { text: "Quản lý vật tư", icon: <BedIcon />, path: "manageFacility" },
-  { text: "Quản lý Discount", icon: <DiscountIcon />, path: "manageDiscount" },
-
+  { text: "Trang chủ", icon: <HomeRoundedIcon />, path: "homeAdmin" },
+  {
+    text: "Thống kê request",
+    icon: <AnalyticsRoundedIcon />,
+    path: "logRequest",
+  },
+  {
+    text: "Quản trị người dùng",
+    icon: <PeopleRoundedIcon />,
+    path: "manageUser",
+  },
+  {
+    text: "Quản trị quyền",
+    icon: <AssignmentRoundedIcon />,
+    path: "manageRole",
+  },
+  { text: "Quản lý router", icon: <RouterIcon />, path: "routeManagement" },
 ];
 
 const secondaryListItems = [
@@ -63,7 +68,7 @@ const MenuContent = ({ onMenuItemClick }) => {
           );
         })}
       </List>
-      <List dense>
+      {/* <List dense>
         {secondaryListItems.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: "block" }}>
             <ListItemButton>
@@ -72,7 +77,7 @@ const MenuContent = ({ onMenuItemClick }) => {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </Stack>
   );
 };

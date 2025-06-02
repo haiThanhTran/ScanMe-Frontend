@@ -113,7 +113,7 @@ const LayoutUser = () => {
   };
 
   const mainMenuItems = [
-    { key: "profile", icon: <UserOutlined />, label: "Tài khoản của tôi" }, // Đổi label lại cho giống mẫu
+    // { key: "profile", icon: <UserOutlined />, label: "Tài khoản của tôi" }, // Đổi label lại cho giống mẫu
     { key: "cart", icon: <ShoppingCartOutlined />, label: "Giỏ hàng" },
     { key: "orders", icon: <HistoryOutlined />, label: "Đơn hàng" },
     { key: "vouchers", icon: <WalletOutlined />, label: "Ví Voucher" },

@@ -28,6 +28,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import AuthService from "../services/AuthService.jsx";
 import { pizzaTheme } from "./theme";
+import { useEffect, useState } from "react";
 
 // Hình ảnh Pizza Boy (sử dụng ảnh từ ảnh mẫu)
 const PIZZA_BOY_IMAGE_URL =
@@ -37,12 +38,17 @@ const PIZZA_BOY_IMAGE_URL =
 
 // Background Image URL (Use the same as Register for consistency)
 const BACKGROUND_IMAGE_URL =
-  "https://media.istockphoto.com/id/1020383084/vi/anh/n%E1%BB%81n-m%C3%A0u-cam-pastel-gi%E1%BA%A5y-m%E1%BA%ABu-h%C3%ACnh-h%E1%BB%8Dc-kh%C3%A1i-ni%E1%BB%87m-t%C3%B3i-thi%E1%BB%83u-n%E1%BA%B1m-ph%E1%BA%B3ng-t%E1%BA%A7m-nh%C3%ACn-tr%C3%AAn-c%C3%B9ng-gi%E1%BA%A5y-m%C3%A0u.jpg?s=612x612&w=0&k=20&c=qjaGyU2sjZjYJ4_V8JMWhREtOEmVtwRAx3GOh2a8E6k=";
+  "https://img.freepik.com/free-vector/abstract-orange-background-with-lines-halftone-effect_1017-32107.jpg?semt=ais_hybrid&w=740";
 
 const Login = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
+  const [boxVisible, setBoxVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setBoxVisible(true), 10);
+  }, []);
 
   // Keeping the existing handleSubmit logic
   const handleSubmit = async (event) => {
@@ -96,6 +102,26 @@ const Login = () => {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      height: "55px",
+      borderRadius: "10px",
+      backgroundColor: "white",
+      marginBottom: "10px",
+      "& input": {
+        padding: "16px 22px",
+        fontSize: "16px",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: pizzaTheme.palette.secondary.main,
+      },
+    },
+    "& .MuiFormHelperText-root": {
+      marginLeft: 2,
+      fontSize: "0.7rem",
+    },
+  };
+
   return (
     <ThemeProvider theme={pizzaTheme}>
       <CssBaseline />
@@ -103,197 +129,245 @@ const Login = () => {
       <Box
         sx={{
           minHeight: "100vh",
-          // Use background image
-          backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          position: "relative",
+          overflow: "hidden",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           padding: 2,
-          overflow: "auto",
         }}
       >
+        {/* Background image + blur overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 0,
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              backdropFilter: "blur(6px)",
+              background: "rgba(255,255,255,0.15)",
+              zIndex: 1,
+            },
+          }}
+        />
+        {/* Nội dung chính */}
         <Grid
           container
-              sx={{
-            bgcolor: "background.paper", // White background for the central box
-            borderRadius: "20px", // Rounded corners for the box
-            boxShadow: "0 15px 35px rgba(0,0,0,0.1)", // Shadow
-            overflow: "hidden", // Hide overflow from rounded corners
-            maxWidth: "900px", // Max width of the central box
+          sx={{
+            position: "relative",
+            zIndex: 2,
+            bgcolor: "background.paper",
+            borderRadius: "20px",
+            boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+            maxWidth: "900px",
             width: "100%",
-            minHeight: { xs: "auto", md: "500px" }, // Min height, adjust as needed
+            minHeight: { xs: "auto", md: "500px" },
+            transform: boxVisible ? "translateY(0)" : "translateY(60px)",
+            opacity: boxVisible ? 1 : 0.7,
+            transition:
+              "transform 0.5s cubic-bezier(.4,1.3,.6,1), opacity 0.5s cubic-bezier(.4,1.3,.6,1)",
           }}
         >
           {/* Left Side - Image */}
           <Grid
             item
             xs={12}
-            sm={5} // Adjust column ratio if needed
+            sm={5}
             sx={{
-              bgcolor: "background.default", // White background for image side
+              bgcolor: "background.default",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              padding: 2,
-              // Optional: hide image section on very small screens
-              // [theme.breakpoints.down('sm')]: { display: 'none' },
+              padding: { xs: 2, sm: 3 },
             }}
           >
             <img
-              src={PIZZA_BOY_IMAGE_URL} // Your pizza boy image
-              alt="Illustration"
+              src={PIZZA_BOY_IMAGE_URL}
+              alt="Minh họa"
               style={{
                 maxWidth: "100%",
-                maxHeight: "100%", // Use 100% to fit within the Grid item height
+                maxHeight: "100%",
                 objectFit: "contain",
-                height: "auto", // Maintain aspect ratio
+                height: "auto",
               }}
             />
           </Grid>
-
           {/* Right Side - Form */}
           <Grid
             item
             xs={12}
-            sm={7} // Remaining columns for the form
+            sm={7}
             sx={{
-              bgcolor: "primary.main", // Orange background for form side
+              bgcolor: "primary.main",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center", // Center form vertically
-              padding: { xs: 1.5, sm: 3, md: 4 }, // Adjusted padding
+              justifyContent: "center",
+              padding: { xs: 1, sm: 2, md: 2.5 },
             }}
           >
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: "flex",
-              flexDirection: "column",
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{
+                display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-              width: "100%",
-                maxWidth: "380px", // Max width for form content within the column
-                gap: 1,
-            }}
-          >
+                width: "100%",
+                maxWidth: "340px",
+                gap: 0.5,
+              }}
+            >
               {/* Lock Icon Avatar */}
               <Avatar sx={{ bgcolor: "background.paper", m: 0.5 }}>
                 <LockOutlinedIcon color="primary" fontSize="large" />
               </Avatar>
-
               {/* Title */}
               <Typography
                 component="h1"
                 variant="h5"
                 sx={{ color: "text.primary", fontWeight: 700, mb: 0.5 }}
               >
-                Sign In
+                Đăng nhập
               </Typography>
-
               {/* Form Fields */}
-              <FormControl fullWidth margin="normal" size="small">
-              <TextField
-                id="username"
-                name="username"
-                  placeholder="Email or Username *"
-                autoComplete="username"
-                autoFocus
-              />
-            </FormControl>
-              <FormControl fullWidth margin="normal" size="small">
-              <TextField
+              <FormControl fullWidth margin="none" size="small">
+                <TextField
+                  id="username"
+                  name="username"
+                  placeholder="Tên đăng nhập *"
+                  autoComplete="username"
+                  autoFocus
+                  size="small"
+                  sx={textFieldStyles}
+                  InputProps={{
+                    style: {
+                      height: 55,
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: 16,
+                      padding: "0 10px",
+                    },
+                  }}
+                  inputProps={{
+                    style: {
+                      padding: 0,
+                      textAlign: "left",
+                    },
+                  }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="none" size="small">
+                <TextField
                   id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                  placeholder="Password *"
-                autoComplete="current-password"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        edge="end"
-                          size="small" // Adjusted icon size
-                      >
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mật khẩu *"
+                  autoComplete="current-password"
+                  size="small"
+                  sx={textFieldStyles}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                          size="small"
+                        >
                           {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
-
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    style: {
+                      height: 55,
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: 16,
+                      padding: "0 10px",
+                    },
+                  }}
+                  inputProps={{
+                    style: {
+                      padding: 0,
+                      textAlign: "left",
+                    },
+                  }}
+                />
+              </FormControl>
               {/* Remember me & Forgot Password */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                   width: "100%",
-                  mt: 0.5, // Adjusted top margin
-                  mb: 1, // Adjusted bottom margin
-              }}
-            >
-              <FormControlLabel
+                  mt: 0.5,
+                  mb: 1,
+                }}
+              >
+                <FormControlLabel
                   control={
                     <Checkbox
                       value="remember"
                       color="default"
-                      size="small" // Adjusted checkbox size
+                      size="small"
+                      sx={{ padding: "6px" }}
                     />
                   }
-                label={
+                  label={
                     <Typography
                       variant="body2"
                       sx={{ color: "text.secondary", fontSize: "0.8rem" }}
                     >
-                      Remember me
+                      Ghi nhớ đăng nhập
                     </Typography>
-                }
-              />
-                <MuiLink
+                  }
+                />
+                {/* <MuiLink
                   href="#"
-                variant="body2"
+                  variant="body2"
                   sx={{
                     color: "#FEBDAB",
                     fontWeight: 600,
                     textDecoration: "none",
-                    fontSize: "0.8rem", // Adjusted font size
+                    fontSize: "0.8rem",
                   }}
-              >
-                  Forgot password?
-                </MuiLink>
-            </Box>
-
+                >
+                  Quên mật khẩu?
+                </MuiLink> */}
+              </Box>
               {/* Sign In Button */}
               <Button
-              type="submit"
-              fullWidth
-              variant="contained"
+                type="submit"
+                fullWidth
+                variant="contained"
                 color="secondary"
                 disabled={isLoading}
-                sx={{ mt: 1, paddingY: 1 }} // Adjusted margin and padding
-            >
-                {isLoading ? "Signing In..." : "SIGN IN"}
+                sx={{ mt: 1, paddingY: 1 }}
+              >
+                {isLoading ? "Đang đăng nhập..." : "ĐĂNG NHẬP"}
               </Button>
-
               {/* Sign Up Link */}
-            <Typography
+              <Typography
                 variant="body2"
                 sx={{
                   color: "text.secondary",
                   alignSelf: "center",
                   mt: 1,
-                  fontSize: "0.8rem", // Adjusted font size
+                  fontSize: "0.8rem",
                 }}
               >
-                Don't have an account?{" "}
+                Chưa có tài khoản?{" "}
                 <MuiLink
                   href="/register"
                   variant="body2"
@@ -301,16 +375,16 @@ const Login = () => {
                     color: "#FEBDAB",
                     fontWeight: 600,
                     textDecoration: "none",
-                    fontSize: "0.8rem", // Adjusted font size
-                }}
-              >
-                  Sign Up
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  Đăng ký
                 </MuiLink>
               </Typography>
             </Box>
           </Grid>
         </Grid>
-          </Box>
+      </Box>
     </ThemeProvider>
   );
 };

@@ -39,13 +39,15 @@ const ProductCard = ({ product }) => {
     navigate(`/products/${product._id}`);
   };
 
+  const oldPrice = Math.round((product.price * 1.22) / 1000) * 1000;
+
   return (
     <Card
       hoverable
       className="product-card"
       bordered={false}
       style={{
-        borderRadius: 18,
+        borderRadius: 10,
         minHeight: 300,
         boxShadow: "0 2px 12px #eee",
       }}
@@ -66,23 +68,7 @@ const ProductCard = ({ product }) => {
           {/* Add discount tag if available */}
           {product.discountedPrice &&
             product.price > product.discountedPrice && (
-              <div className="discount-tag">
-                {" "}
-                {/* Discount tag */}
-                {/* Calculate discount percentage or amount */}
-                {
-                  product.price &&
-                  typeof product.price === "number" &&
-                  product.discountedPrice &&
-                  typeof product.discountedPrice === "number"
-                    ? `Giảm ${Math.round(
-                        ((product.price - product.discountedPrice) /
-                          product.price) *
-                          100
-                      )}%`
-                    : null // Or display amount if percentage is not suitable
-                }
-              </div>
+              <div className="discount-tag">Giảm 22%</div>
             )}
         </div>
       }
@@ -92,7 +78,15 @@ const ProductCard = ({ product }) => {
         <Title
           level={5}
           className="product-card-title"
-          style={{ marginBottom: 0 }}
+          style={{
+            marginTop: 0,
+            maxHeight: "3.6em",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
         >
           {product.name}
         </Title>
@@ -102,20 +96,14 @@ const ProductCard = ({ product }) => {
       </div>
 
       <div className="product-card-prices" style={{ marginBottom: 8 }}>
-        {product.discountedPrice ? (
-          <Space size={4}>
-            <Text delete className="original-price">
-              {`${product.price?.toLocaleString("vi-VN")} đ`}
-            </Text>
-            <Text strong type="danger" className="discounted-price">
-              {`${product.discountedPrice?.toLocaleString("vi-VN")} đ`}
-            </Text>
-          </Space>
-        ) : (
-          <Text strong className="price">
+        <Space size={4}>
+          <Text delete className="original-price">
+            {`${oldPrice.toLocaleString("vi-VN")} đ`}
+          </Text>
+          <Text strong type="danger" className="discounted-price">
             {`${product.price?.toLocaleString("vi-VN")} đ`}
           </Text>
-        )}
+        </Space>
       </div>
 
       <div style={{ marginTop: "16px" }} className="product-card-actions">

@@ -16,6 +16,8 @@ const Card = styled(Box)(({ theme }) => ({
   gap: theme.spacing(3),
   textAlign: "center",
 }));
+const BACKGROUND_IMAGE_URL =
+  "https://img.freepik.com/free-vector/abstract-orange-background-with-lines-halftone-effect_1017-32107.jpg?semt=ais_hybrid&w=740";
 
 const VerificationSuccessScreen = ({ type }) => {
   const navigate = useNavigate();
@@ -35,7 +37,6 @@ const VerificationSuccessScreen = ({ type }) => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -57,18 +58,18 @@ const VerificationSuccessScreen = ({ type }) => {
           {type === "waiting" ? <CircularProgress size={50} /> : "✅"}{" "}
           {/* Placeholder icon */}
         </Box>
-        <Typography variant="h5" fontWeight="bold" color="#2988BC">
+        <Typography variant="h5" fontWeight="bold" color="#E13621">
           {title}
         </Typography>
-        <Typography variant="body1" color="textSecondary">
+        <Typography variant="body1" color="E13621">
           {message}
         </Typography>
         <Button
           variant="contained"
           size="large"
           sx={{
-            bgcolor: "#2988BC",
-            "&:hover": { bgcolor: "#1e5f8d" },
+            bgcolor: "#E13621",
+            "&:hover": { bgcolor: "#E15621" },
             borderRadius: "8px",
             py: 1.5,
             textTransform: "none",

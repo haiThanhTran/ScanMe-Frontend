@@ -13,20 +13,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { notifySuccess } from "../../components/notification/ToastNotification.jsx";
 import styles from "./Header.module.css";
 
-import { Layout, Button, Menu, Space, Dropdown, Avatar } from "antd"
-import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons"
-import { useNavigate, useLocation } from "react-router-dom"
-import { notifySuccess } from "../../components/notification/ToastNotification.jsx"
-import authService from "../../services/AuthService.jsx"
-import { useState, useEffect } from "react"
-
-const { Header: AntHeader } = Layout
+const { Header: AntHeader } = Layout;
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [lastCheckTime, setLastCheckTime] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isDocked, setIsDocked] = useState(false);
@@ -68,23 +63,28 @@ function Header() {
   useEffect(() => {
     checkAuthStatus();
     const handleStorageChange = (event) => {
-      if (event.key === 'token' || event.key === 'username') {
+      if (event.key === "token" || event.key === "username") {
         checkAuthStatus();
       }
     };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, [checkAuthStatus]);
 
   useEffect(() => {
-    const headerHeight = headerRef.current ? headerRef.current.offsetHeight : 70;
+    const headerHeight = headerRef.current
+      ? headerRef.current.offsetHeight
+      : 70;
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY <= 5) {
         setIsHeaderVisible(true);
         setIsDocked(false); // Luôn undocked khi ở top
-      } else if (currentScrollY > lastScrollY.current && currentScrollY > headerHeight / 2) {
+      } else if (
+        currentScrollY > lastScrollY.current &&
+        currentScrollY > headerHeight / 2
+      ) {
         setIsHeaderVisible(false);
       } else if (currentScrollY < lastScrollY.current) {
         setIsHeaderVisible(true);
@@ -104,35 +104,52 @@ function Header() {
   const handleMenuClick = (e) => {
     const key = e.key;
     switch (key) {
-      case "profile": navigate("/information/profile"); break;
-      case "cart": navigate("/information/cart"); break;
-      case "vouchers": navigate("/information/my-vouchers"); break;
-      case "orders": navigate("/information/order-history"); break;
-      case "logout": handleLogout(); break;
-      default: break;
+      case "profile":
+        navigate("/information/profile");
+        break;
+      case "cart":
+        navigate("/information/cart");
+        break;
+      case "vouchers":
+        navigate("/information/my-vouchers");
+        break;
+      case "orders":
+        navigate("/information/order-history");
+        break;
+      case "logout":
+        handleLogout();
+        break;
+      default:
+        break;
     }
-  }
+  };
 
   const userMenuItems = [
     {
-        key: "userHeader", // Key cho mục header trong dropdown
-        label: (user && user.username) ? user.username : "Tài khoản", // Hiển thị username
-        type: "group", // Kiểu group để style khác
-        className: styles.dropdownUserHeader // Class để style
+      key: "userHeader", // Key cho mục header trong dropdown
+      label: user && user.username ? user.username : "Tài khoản", // Hiển thị username
+      type: "group", // Kiểu group để style khác
+      className: styles.dropdownUserHeader, // Class để style
     },
     { type: "divider" },
-    { key: "profile", label: "Tài khoản của tôi", icon: <UserOutlined /> },
+    // { key: "profile", label: "Tài khoản của tôi", icon: <UserOutlined /> },
     { key: "cart", label: "Giỏ hàng của tôi", icon: <ShoppingCartOutlined /> },
     { key: "vouchers", label: "Ví Voucher", icon: <WalletOutlined /> },
     { key: "orders", label: "Đơn hàng", icon: <HistoryOutlined /> },
     { type: "divider" },
-    { key: "logout", label: "Đăng xuất", icon: <LogoutOutlined />, danger: true },
+    {
+      key: "logout",
+      label: "Đăng xuất",
+      icon: <LogoutOutlined />,
+      danger: true,
+    },
   ];
 
   const mainMenuItems = [
-    { label: "Trang chủ", path: "/" },
+    { label: "Trang Chủ", path: "/" },
     { label: "Mua Sản Phẩm", path: "/products" },
-    { label: "Săn Voucher", path: "/vouchers" },
+    { label: "Kho Voucher", path: "/vouchers" },
+    { label: "Trung tâm hỗ trợ", path: "/faq" },
   ];
 
   const headerClasses = [
@@ -155,7 +172,7 @@ function Header() {
         `}
       </style>
       <AntHeader
-        className={`header-container${isScrolled ? " scrolled" : ""}`}
+        className={headerClasses}
         style={{
           position: "fixed",
           top: 0,
@@ -181,7 +198,7 @@ function Header() {
               width: "auto",
               objectFit: "contain",
               marginRight: "4px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           />
           <span style={{ fontSize: "20px", fontWeight: "bold", color: "red" }}>
@@ -189,50 +206,20 @@ function Header() {
           </span>
         </div>
 
-
-
         {/* Center: Menu */}
-        <div
-          style={{
-            display: "flex",
-            gap: "20px",
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          {menuItems.map((item) => (
-            <Button
+        <div className={styles.mainNav}>
+          {mainMenuItems.map((item) => (
+            <button
               key={item.path}
-              type="link"
-              style={{
-                color:
-                  location.pathname === item.path || (item.path === "/" && location.pathname === "/")
-                    ? "#e61e43"
-                    : "#222",
-                fontWeight: 500,
-                fontSize: 15,
-                borderBottom:
-                  location.pathname === item.path || (item.path === "/" && location.pathname === "/")
-                    ? "2px solid #e61e43"
-                    : "none",
-                background: "none",
-                padding: "0 4px",
-                margin: 0,
-                borderRadius: 0,
-                transition: "color 0.3s, border-bottom 0.3s",
-                fontFamily: "Inter, Roboto, Arial, sans-serif",
-              }}
+              className={`${styles.menuItem} ${
+                location.pathname === item.path ? styles.active : ""
+              }`}
               onClick={() => navigate(item.path)}
-              onMouseOver={(e) => (e.currentTarget.style.color = "#e61e43")}
-              onMouseOut={(e) =>
-              (e.currentTarget.style.color =
-                location.pathname === item.path || (item.path === "/" && location.pathname === "/")
-                  ? "#e61e43"
-                  : "#222")
-              }
+              type="button"
+              tabIndex={0}
             >
-              {item.label}
-            </Button>
+              <span>{item.label}</span>
+            </button>
           ))}
         </div>
         {/* Right: User actions */}
@@ -246,25 +233,88 @@ function Header() {
           }}
         >
           {isLoggedIn ? (
-            <Dropdown overlay={userMenu} placement="bottomRight">
-              <Space style={{ cursor: "pointer" }}>
-                <Avatar icon={<UserOutlined />} />
-                <span>{user?.username}</span>
-                <DownOutlined />
-              </Space>
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item
+                    key="username"
+                    disabled
+                    style={{ fontWeight: 600, cursor: "default" }}
+                  >
+                    haiThanhTranDev
+                  </Menu.Item>
+                  <Menu.Divider />
+                  {/* <Menu.Item
+                    key="profile"
+                    icon={<UserOutlined />}
+                    onClick={() => navigate("/information/profile")}
+                  >
+                    Chỉnh Sửa Hồ Sơ
+                  </Menu.Item> */}
+                  <Menu.Item
+                    key="cart"
+                    icon={<ShoppingCartOutlined />}
+                    onClick={() => navigate("/information/cart")}
+                  >
+                    Giỏ Hàng Của Bạn
+                  </Menu.Item>
+                  <Menu.Item
+                    key="orders"
+                    icon={<HistoryOutlined />}
+                    onClick={() => navigate("/information/order-history")}
+                  >
+                    Đơn Hàng Của Bạn
+                  </Menu.Item>
+                  <Menu.Item
+                    key="vouchers"
+                    icon={<WalletOutlined />}
+                    onClick={() => navigate("/information/my-vouchers")}
+                  >
+                    Voucher Của Bạn
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item
+                    key="logout"
+                    icon={<LogoutOutlined />}
+                    danger
+                    onClick={handleLogout}
+                  >
+                    Đăng Xuất
+                  </Menu.Item>
+                </Menu>
+              }
+              placement="bottomRight"
+              trigger={["hover", "click"]}
+            >
+              <Avatar
+                icon={<UserOutlined />}
+                style={{
+                  cursor: "pointer",
+                  background: "#eaeaea",
+                  color: "#e61e43",
+                }}
+              />
             </Dropdown>
           ) : (
             <>
               <Button
                 style={{
-                  border: "none",
+                  border: "1.5px solid #e61e43",
                   color: "#e61e43",
                   fontWeight: 600,
                   fontSize: 15,
+                  borderRadius: 20,
+                  background: "#fff",
+                  minWidth: 100,
+                  marginRight: 8,
                 }}
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/faq")}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.background = "#fff0f3")
+                }
+                onMouseOut={(e) => (e.currentTarget.style.background = "#fff")}
               >
-                Đăng nhập
+                Hỗ Trợ
               </Button>
               <Button
                 style={{
@@ -274,18 +324,24 @@ function Header() {
                   fontWeight: 600,
                   fontSize: 15,
                   minWidth: 100,
-                  padding: "0 12px",
+                  borderRadius: 20,
                 }}
                 onClick={() => navigate("/register")}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.background = "#c31e29")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.background = "#e61e43")
+                }
               >
-                Đăng ký
+                Đăng Ký
               </Button>
             </>
           )}
         </div>
       </AntHeader>
     </>
-  )
+  );
 }
 
-export default Header
+export default Header;

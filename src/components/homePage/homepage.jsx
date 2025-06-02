@@ -4,7 +4,7 @@ import Header from "./header";
 import Footer from "./footer"; // Bạn muốn Footer hiển thị ở tất cả các trang trong HomePage này
 import { Outlet, useLocation } from "react-router-dom"; // Thêm useLocation
 import styles from "./HomePage.module.css";
-
+import { ChatWidget } from "./chatWidget";
 const HEADER_HEIGHT = 70;
 
 function HomePage() {
@@ -27,6 +27,7 @@ function HomePage() {
         <Outlet /> {/* LayoutUser sẽ được render ở đây */}
       </main>
        <Footer />
+       <ChatWidget />
     </div>
   );
 }

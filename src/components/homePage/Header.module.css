@@ -10,6 +10,8 @@
     display: flex;
     justify-content: center;
     background-color: #Ffff  !important; /* NỀN MẶC ĐỊNH LÀ MÀU XÁM NHẠT */
+    border-bottom: 1px solid #ececec; /* Viền phân cách */
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.07); /* Drop shadow nhẹ */
   }
   
   .appHeader.hidden {
@@ -82,38 +84,58 @@
   .mainNav { display: flex; align-items: center; height: 100%; }
   
   .menuItem {
-    position: relative; background: none !important; box-shadow: none !important;
-    font-family: 'Arial', sans-serif; font-weight: 700 !important; font-size: 14px !important;
-    padding: 0 15px !important; height: 100% !important;
-    display: flex !important; align-items: center !important;
-    border: none !important; border-radius: 0 !important;
-    transition: color 0.2s ease-in-out; line-height: normal !important;
+    position: relative;
+    background: none;
+    border: none;
+    outline: none;
+    color: #222;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 0 16px;
+    margin: 0;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-family: inherit;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    background: transparent;
   }
   
-.menuItem::after {
-    content: '';
-    position: absolute;
-    left: 8px; /* Bắt đầu từ vị trí padding của menuItem */
-    right: 8px; /* Kết thúc ở vị trí padding của menuItem */
-    /* HOẶC CÁCH KHÁC:
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0; // Sẽ animate width từ 0 đến calc(100% - 16px) ví dụ
-    */
-    bottom: -10px; /* ĐẶT GẠCH CHÂN Ở DƯỚI CÙNG CỦA menuItem */
-    height: 2.5px; /* Độ dày của gạch chân */
-    background-color: transparent; /* Màu ban đầu, sẽ được đổi khi active/hover */
-    transform-origin: left; /* Cho animation trượt từ trái */
-    transform: scaleX(0); /* Ban đầu ẩn đi bằng cách co theo chiều X */
-    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.3s ease-in-out;
-    border-radius: 1px;
+  .menuItem span {
+    position: relative;
+    z-index: 1;
   }
-
+  
+  /* Underline effect */
+  .menuItem::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 10px;
+    height: 2.5px;
+    background: #e61e43;
+    border-radius: 1.5px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), background 0.3s;
+    z-index: 0;
+  }
+  
+  /* Hover & active underline */
+  .menuItem:hover,
+  .menuItem:focus,
+  .menuItem.active {
+    color: #e61e43;
+  }
+  
   .menuItem:hover::after,
-.menuItem.active::after {
-  transform: scaleX(1); /* Hiện ra bằng cách mở rộng theo chiều X */
-  /* Màu gạch chân sẽ được quyết định bởi các class cha .appHeader.docked hoặc .appHeader.undocked */
-}
+  .menuItem:focus::after,
+  .menuItem.active::after {
+    transform: scaleX(1);
+    background: #e61e43;
+  }
   
   /* Màu chữ và gạch chân cho trạng thái docked (nền sáng) */
   .appHeader.docked .menuItem:hover::after,
@@ -192,3 +214,34 @@
   .appHeader.undocked .contactButton:hover {
       background-color: #c31e29 !important; border-color: #c31e29 !important;
   }
+
+.supportButton {
+  border: 1.5px solid #e61e43 !important;
+  color: #e61e43 !important;
+  background: #fff !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  border-radius: 20px !important;
+  min-width: 100px;
+  margin-right: 8px;
+  transition: background 0.2s;
+}
+.supportButton:hover, .supportButton:focus {
+  background: #fff0f3 !important;
+  color: #e61e43 !important;
+}
+
+.registerButton {
+  background: #e61e43 !important;
+  color: #fff !important;
+  border: none !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  min-width: 100px;
+  border-radius: 20px !important;
+  transition: background 0.2s;
+}
+.registerButton:hover, .registerButton:focus {
+  background: #c31e29 !important;
+  color: #fff !important;
+}

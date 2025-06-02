@@ -17,7 +17,7 @@ import {
   IconButton,
   FormControl,
 } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined"; // Material UI icon
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import VerificationSuccessScreen from "../components/successScreen/VerificationSuccessScreen.jsx";
@@ -26,17 +26,15 @@ import {
   notifyError,
 } from "../components/notification/ToastNotification.jsx";
 import Loading from "../components/loading/Loading.jsx";
-import { pizzaTheme } from "./theme"; // Giả sử bạn lưu theme.js cùng cấp
+import { pizzaTheme } from "./theme";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useEffect, useState } from "react";
 
-// Hình ảnh Pizza Boy
 const PIZZA_BOY_IMAGE_URL =
   "https://png.pngtree.com/png-clipart/20250128/original/pngtree-3d-pizza-boy-running-with-freshly-baked-png-image_20068701.png";
-
-// Background Image URL
 const BACKGROUND_IMAGE_URL =
-  "https://media.istockphoto.com/id/1020383084/vi/anh/n%E1%BB%81n-m%C3%A0u-cam-pastel-gi%E1%BA%A5y-m%E1%BA%ABu-h%C3%ACnh-h%E1%BB%8Dc-kh%C3%A1i-ni%E1%BB%87m-t%C3%B3i-thi%E1%BB%83u-n%E1%BA%B1m-ph%E1%BA%B3ng-t%E1%BA%A7m-nh%C3%ACn-tr%C3%AAn-c%C3%B9ng-gi%E1%BA%A5y-m%C3%A0u.jpg?s=612x612&w=0&k=20&c=qjaGyU2sjZjYJ4_V8JMWhREtOEmVtwRAx3GOh2a8E6k=";
+  "https://img.freepik.com/free-vector/abstract-orange-background-with-lines-halftone-effect_1017-32107.jpg?semt=ais_hybrid&w=740";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -44,59 +42,62 @@ const Register = () => {
   const [registrationSuccess, setRegistrationSuccess] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [boxVisible, setBoxVisible] = useState(false);
 
   const joiMessages = {
-    "string.empty": "This field is required",
-    "string.min": "Must have at least {#limit} characters",
-    "string.email": "Invalid email format",
-    "any.only": "Passwords do not match",
-    "any.required": "This field is required",
-    "boolean.base": "You must agree to the terms", // Cho agreeTerms
-    "object.unknown": "Field not allowed",
+    "string.empty": "Trường này là bắt buộc",
+    "string.min": "Phải có ít nhất {#limit} ký tự",
+    "string.email": "Định dạng email không hợp lệ",
+    "any.only": "Mật khẩu không khớp",
+    "any.required": "Trường này là bắt buộc",
+    "boolean.base": "Bạn phải đồng ý với điều khoản",
+    "object.unknown": "Trường không hợp lệ",
   };
 
   const validationSchema = Joi.object({
-    // API của bạn dùng 'username' cho tên. Ảnh 1 có 'Full Name'.
-    // Chúng ta sẽ map 'Full Name' của UI vào 'username' của API.
     username: Joi.string()
       .min(3)
       .required()
-      .label("Full Name")
+      .label("Họ và tên")
       .messages(joiMessages),
-    // Ảnh 1 có 'Phone Number', nhưng API hiện tại không có. Tạm thời bỏ qua.
-    // phoneNumber: Joi.string().pattern(/^[0-9]{10,11}$/).required().label("Phone Number").messages({...joiMessages, "string.pattern.base": "Invalid phone number"}),
     email: Joi.string()
-      .email({ tlds: false })
+      .email({ tlds: { allow: false } })
       .required()
       .label("Email")
-      .messages(joiMessages),
+      .messages(joiMessages), // Sửa tlds
     password: Joi.string()
       .min(6)
       .required()
-      .label("Password")
+      .label("Mật khẩu")
       .messages(joiMessages),
     confirmPassword: Joi.string()
       .valid(Joi.ref("password"))
       .required()
-      .label("Confirm Password")
+      .label("Xác nhận mật khẩu")
       .messages(joiMessages),
     agreeTerms: Joi.boolean()
       .valid(true)
       .required()
-      .label("Terms agreement")
+      .label("Điều khoản")
       .messages(joiMessages),
   });
 
   const formik = useFormik({
     initialValues: {
-      username: "", // For Full Name
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
       agreeTerms: false,
     },
     validate: (values) => {
-      const { error } = validationSchema.validate(values, {
+      // Loại bỏ khoảng trắng ở đầu/cuối
+      const cleanValues = {
+        ...values,
+        password: values.password.trim(),
+        confirmPassword: values.confirmPassword.trim(),
+      };
+      const { error } = validationSchema.validate(cleanValues, {
         abortEarly: false,
       });
       if (!error) return {};
@@ -108,43 +109,53 @@ const Register = () => {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        // API endpoint của bạn chỉ nhận username, email, password
         const apiPayload = {
-          username: values.username, // "Full Name" từ UI
+          username: values.username,
           email: values.email,
           password: values.password,
+          confirmPassword: values.confirmPassword,
         };
+        // Giả sử API đăng ký không trả về token ngay mà chỉ thông báo thành công
         const response = await axios.post(
-          "http://localhost:9999/api/register/account",
+          "http://localhost:9999/api/register/account", // Đảm bảo API endpoint đúng
           apiPayload
         );
-        if (response.status === 200 || response.status === 201) {
-          // Hoặc các status code thành công khác
+
+        // Kiểm tra response.data vì axios bao bọc response trong data
+        if (
+          response.data &&
+          (response.data.success ||
+            response.status === 200 ||
+            response.status === 201)
+        ) {
           notifySuccess(
-            "Registration successful! Please check your email to verify."
+            response.data.message ||
+              "Đăng ký thành công! Vui lòng kiểm tra email để xác thực."
           );
-          setRegistrationSuccess(true); // Để chuyển sang màn hình chờ verify
+          setRegistrationSuccess(true);
         } else {
           notifyError(
-            "Registration failed: " +
-              (response.data?.message || "Unknown error")
+            response.data?.message || "Đăng ký thất bại. Vui lòng thử lại."
           );
         }
       } catch (error) {
         notifyError(
           error.response?.data?.message ||
             error.message ||
-            "An error occurred during registration."
+            "Có lỗi xảy ra trong quá trình đăng ký."
         );
-        console.error("Registration error:", error);
+        console.error("Registration error:", error.response || error);
       } finally {
         setLoading(false);
       }
     },
   });
 
+  useEffect(() => {
+    setTimeout(() => setBoxVisible(true), 10);
+  }, []);
+
   if (registrationSuccess) {
-    // Chuyển email đã đăng ký sang màn hình success
     return (
       <VerificationSuccessScreen type="waiting" email={formik.values.email} />
     );
@@ -154,207 +165,239 @@ const Register = () => {
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
 
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      height: 42, // Chiều cao cố định cho ô input
+      borderRadius: "8px", // Bo tròn góc
+      backgroundColor: "white", // Nền trắng cho input
+      "& input": {
+        padding: "10px 14px", // Padding bên trong cho text
+        fontSize: "15px",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: pizzaTheme.palette.secondary.main, // Màu border khi focus
+      },
+    },
+    "& .MuiInputLabel-outlined": {
+      // Style cho label nếu dùng
+      transform: "translate(14px, 12px) scale(1)",
+      "&.MuiInputLabel-shrink": {
+        transform: "translate(14px, -9px) scale(0.75)",
+      },
+    },
+    "& .MuiFormHelperText-root": {
+      // Style cho helper text (lỗi)
+      marginLeft: 2,
+      fontSize: "0.7rem",
+    },
+  };
+
   return (
     <ThemeProvider theme={pizzaTheme}>
       <CssBaseline />
       {loading && <Loading />}
       <Box
-      sx={{
-        minHeight: "100vh",
-          // Use background image
-          backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        sx={{
+          minHeight: "100vh",
+          position: "relative",
+          overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           padding: 2,
-          overflow: "auto",
-      }}
-    >
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 0,
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              backdropFilter: "blur(6px)",
+              background: "rgba(255,255,255,0.15)",
+              zIndex: 1,
+            },
+          }}
+        />
         <Grid
           container
           sx={{
-            bgcolor: "background.paper", // White background for the central box
-            borderRadius: "20px", // Rounded corners for the box
-            boxShadow: "0 15px 35px rgba(0,0,0,0.1)", // Shadow
-            overflow: "hidden", // Hide overflow from rounded corners
-            maxWidth: "900px", // Max width of the central box
+            position: "relative",
+            zIndex: 2,
+            bgcolor: "background.paper",
+            borderRadius: "20px",
+            boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+            maxWidth: "900px",
             width: "100%",
-            minHeight: { xs: "auto", md: "500px" }, // Min height, adjust as needed
+            minHeight: { xs: "auto", md: "500px" },
+            transform: boxVisible ? "translateY(0)" : "translateY(60px)",
+            opacity: boxVisible ? 1 : 0.7,
+            transition:
+              "transform 0.5s cubic-bezier(.4,1.3,.6,1), opacity 0.5s cubic-bezier(.4,1.3,.6,1)",
           }}
         >
-          {/* Left Side - Image */}
           <Grid
             item
             xs={12}
-            sm={5} // Adjust column ratio if needed (e.g., sm={4} or md={6})
+            sm={5}
             sx={{
-              bgcolor: "background.default", // White background for image side
+              bgcolor: "background.default",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              padding: 2,
-              // Optional: hide image section on very small screens
-              // [theme.breakpoints.down('sm')]: { display: 'none' },
+              padding: { xs: 2, sm: 3 },
             }}
           >
             <img
               src={PIZZA_BOY_IMAGE_URL}
-              alt="Illustration"
+              alt="Minh họa"
               style={{
                 maxWidth: "100%",
-                maxHeight: "100%", // Use 100% to fit within the Grid item height
+                maxHeight: "100%",
                 objectFit: "contain",
-                height: "auto", // Maintain aspect ratio
+                height: "auto",
               }}
             />
           </Grid>
-
-          {/* Right Side - Form */}
           <Grid
             item
             xs={12}
-            sm={7} // Remaining columns for the form
+            sm={7}
             sx={{
-              bgcolor: "primary.main", // Orange background for form side
+              bgcolor: "primary.main",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center", // Center form vertically
-              padding: { xs: 1.5, sm: 3, md: 4 }, // Further reduced padding
+              justifyContent: "center",
+              padding: { xs: 2, sm: 3, md: 4 }, // Tăng padding một chút
             }}
-        >
+          >
             <Box
+              component="form"
+              onSubmit={formik.handleSubmit}
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 width: "100%",
-                maxWidth: "380px", // Max width for form content within the column
-                gap: 1, // Further reduced gap
+                maxWidth: "360px", // Tăng max width cho form
               }}
             >
-              {/* Lock Icon Avatar */}
-              <Avatar sx={{ bgcolor: "background.paper", m: 0.5 }}>
-                <LockOutlinedIcon color="primary" fontSize="large" />
+              <Avatar sx={{ bgcolor: "background.paper", m: 1 }}>
+                <LockOutlinedIcon color="primary" fontSize="medium" />
               </Avatar>
-
-              {/* Title */}
-        <Typography
+              <Typography
                 component="h1"
                 variant="h5"
-                sx={{ color: "text.primary", fontWeight: 700, mb: 0.5 }}
-        >
-                Create Account
-        </Typography>
+                sx={{ color: "text.primary", fontWeight: 700, mb: 2 }}
+              >
+                Tạo tài khoản
+              </Typography>
 
-              {/* Form Fields */}
-              {/* Full Name (mapped to username) */}
-              <FormControl fullWidth margin="normal" size="small">
-            <TextField
-                  id="username"
-              name="username"
-                  placeholder="Full Name *"
-              value={formik.values.username}
-              onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.username && Boolean(formik.errors.username)
-                  }
-                  helperText={formik.touched.username && formik.errors.username}
-                />
-              </FormControl>
-              {/* Phone Number (omitted as per API) */}
-              {/* <TextField fullWidth placeholder="Phone Number *" type="tel" /> */}
-
-              {/* Email */}
-              <FormControl fullWidth margin="normal" size="small">
-            <TextField
-                  id="email"
-                  name="email"
-              type="email"
-                  placeholder="Email *"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email}
-                />
-              </FormControl>
-
-              {/* Password */}
-              <FormControl fullWidth margin="normal" size="small">
-            <TextField
-                  id="password"
-                  name="password"
-              type={showPassword ? "text" : "password"}
-                  placeholder="Password *"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.password && Boolean(formik.errors.password)
-                  }
-                  helperText={formik.touched.password && formik.errors.password}
-              InputProps={{
-                endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                          size="small"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                      </InputAdornment>
-                ),
-              }}
-            />
-              </FormControl>
-
-              {/* Confirm Password */}
-              <FormControl fullWidth margin="normal" size="small">
-            <TextField
-                  id="confirmPassword"
-                  name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm Password *"
-              value={formik.values.confirmPassword}
-              onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.confirmPassword &&
-                    Boolean(formik.errors.confirmPassword)
-                  }
-                  helperText={
-                    formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword
-                  }
-              InputProps={{
-                endAdornment: (
-                      <InputAdornment position="end">
-                  <IconButton
-                          aria-label="toggle confirm password visibility"
-                          onClick={handleClickShowConfirmPassword}
-                          edge="end"
-                          size="small"
-                  >
-                          {showConfirmPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                  </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
-
-              {/* Terms Checkbox */}
+              {/* Sử dụng sx prop để kiểm soát margin và style */}
+              <TextField
+                fullWidth
+                id="username"
+                name="username"
+                placeholder="Họ và tên *" // Đổi placeholder
+                value={formik.values.username}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.username && Boolean(formik.errors.username)
+                }
+                helperText={formik.touched.username && formik.errors.username}
+                sx={{ ...textFieldStyles, mb: 1.5 }} // Áp dụng style chung và margin bottom
+              />
+              <TextField
+                fullWidth
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email *"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+                sx={{ ...textFieldStyles, mb: 1.5 }}
+              />
+              <TextField
+                fullWidth
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Mật khẩu *"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+                helperText={formik.touched.password && formik.errors.password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                        size="small"
+                      >
+                        {showPassword ? (
+                          <VisibilityOff fontSize="small" />
+                        ) : (
+                          <Visibility fontSize="small" />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ ...textFieldStyles, mb: 1.5 }}
+              />
+              <TextField
+                fullWidth
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Nhập lại mật khẩu *"
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.confirmPassword &&
+                  Boolean(formik.errors.confirmPassword)
+                }
+                helperText={
+                  formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowConfirmPassword}
+                        edge="end"
+                        size="small"
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOff fontSize="small" />
+                        ) : (
+                          <Visibility fontSize="small" />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ ...textFieldStyles, mb: 1 }} // Margin bottom nhỏ hơn cho trường cuối
+              />
               <FormControlLabel
                 control={
                   <Checkbox
@@ -362,8 +405,9 @@ const Register = () => {
                     checked={formik.values.agreeTerms}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    color="default" // Checkbox color is styled in theme.js MuiCheckbox
-                    size="small" // Reduced checkbox size
+                    color="default" // Hoặc primary/secondary tùy theme
+                    size="small"
+                    sx={{ padding: "6px" }} // Tăng vùng click cho checkbox
                   />
                 }
                 label={
@@ -371,84 +415,80 @@ const Register = () => {
                     variant="body2"
                     sx={{ color: "text.secondary", fontSize: "0.8rem" }}
                   >
-                    I accept the{" "}
+                    Tôi đồng ý với{" "}
                     <MuiLink
                       href="#"
                       sx={{
                         color: "#FEBDAB",
                         fontWeight: 600,
                         textDecoration: "none",
-                        fontSize: "0.8rem", // Reduced font size
+                        fontSize: "0.8rem",
                       }}
                     >
-                      terms of service
+                      điều khoản dịch vụ
                     </MuiLink>{" "}
-                    and{" "}
+                    và{" "}
                     <MuiLink
                       href="#"
-              sx={{
+                      sx={{
                         color: "#FEBDAB",
                         fontWeight: 600,
                         textDecoration: "none",
-                        fontSize: "0.8rem", // Reduced font size
-              }}
+                        fontSize: "0.8rem",
+                      }}
                     >
-                      privacy policy
+                      chính sách bảo mật
                     </MuiLink>
                   </Typography>
                 }
-                sx={{ mt: 0.5, mb: formik.errors.agreeTerms ? 0 : 0.5 }} // Further reduced margin
+                sx={{ mt: 0.5, mb: formik.errors.agreeTerms ? 0 : 0.5 }}
               />
               {formik.touched.agreeTerms && formik.errors.agreeTerms && (
-        <Typography
+                <Typography
                   variant="caption"
                   sx={{
                     color: "error.main",
                     display: "block",
                     mt: 0,
                     ml: 0.5,
-                    fontSize: "0.7rem", // Reduced font size
+                    fontSize: "0.7rem",
                   }}
                 >
                   {formik.errors.agreeTerms}
                 </Typography>
               )}
-
-              {/* Sign Up Button */}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                color="secondary" // Button color from theme
+                color="secondary"
                 disabled={loading}
-                sx={{ mt: formik.errors.agreeTerms ? 0 : 1, paddingY: 1 }} // Adjusted margin and padding
+                sx={{ mt: 2, mb: 1, paddingY: 1.2, fontWeight: 600 }}
               >
-                {loading ? "Processing..." : "SIGN UP"}
+                {loading ? "Đang xử lý..." : "ĐĂNG KÝ"}
               </Button>
-
-              {/* Sign In Link */}
-      <Typography
-        variant="body2"
-        sx={{
+              <Typography
+                variant="body2"
+                sx={{
                   color: "text.secondary",
                   alignSelf: "center",
                   mt: 1,
                   fontSize: "0.8rem",
-                }} // Reduced margin and font size
+                }}
               >
-                Already have an account?{" "}
+                Đã có tài khoản?{" "}
                 <MuiLink
                   href="/login"
                   sx={{
                     color: "#FEBDAB",
                     fontWeight: 600,
                     textDecoration: "none",
-                    fontSize: "0.8rem", // Reduced font size
-        }}
-      >
-                  Sign In
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  Đăng nhập
                 </MuiLink>
-      </Typography>
+              </Typography>
             </Box>
           </Grid>
         </Grid>
