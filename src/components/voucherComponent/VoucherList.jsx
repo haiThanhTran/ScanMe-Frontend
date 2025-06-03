@@ -26,7 +26,7 @@ const VoucherList = ({ selectedStores, selectedCategories }) => {
     try {
         const data = await fetchUtils.get(`/voucher?${params.toString()}`, false);
         setVouchers(data.vouchers || []);
-        setTotal(data.pagination?.total || data.total || 0); // Sửa lại cách lấy total nếu cần
+        setTotal(data.pagination?.totalRecords || data.total || 0); // Sửa lại cách lấy total nếu cần
     } catch (err) {
         message.error("Không thể tải danh sách voucher!");
         setVouchers([]);
