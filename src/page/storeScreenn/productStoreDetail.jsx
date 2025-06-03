@@ -15,6 +15,7 @@ import {
   Paper,
   Avatar,
 } from '@mui/material';
+import fetchUtils from '../../utils/fetchUtils';
 
 const ProductStoreDetail = () => {
   const { id } = useParams();
@@ -25,13 +26,8 @@ const ProductStoreDetail = () => {
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:9999/api/products-store/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setProduct(response.data);
+        const response = await fetchUtils.get(`/products-store/${id}`,true);
+        setProduct(response);
       } catch (error) {
         setError('Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.');
         console.error('Failed to fetch product detail:', error);

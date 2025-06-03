@@ -37,6 +37,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import ModelEditProduct from './modelEditProduct';
 import axios from 'axios';
+import fetchUtils from '../../utils/fetchUtils';
 
 // Tạo theme với màu chủ đạo đỏ trắng
 const theme = createTheme({
@@ -144,13 +145,8 @@ function ProductStore() {
 
   const handleEdit = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:9999/api/products-store/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setDataDetail(response.data);
+      const response = await fetchUtils.get(`/products-store/${id}`, true);
+      setDataDetail(response);
       setOpenModal(true);
     } catch (error) {
       setError('Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.');
@@ -163,14 +159,9 @@ function ProductStore() {
 
   const handleDeleteConfirmed = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.delete(`http://localhost:9999/api/products-store/${deleteId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetchUtils.remove(`/products-store/${deleteId}`, true);
 
-      if (response.status === 200) {
+      if (response) {
         setProducts(products.filter(product => product._id !== deleteId));
         setTotal(total - 1);
         setError(null);
@@ -202,22 +193,7 @@ function ProductStore() {
         setLoading(false);
         return;
       }
-
-      const response = await fetch(`http://localhost:9999/api/products-store?page=${currentPage}&limit=${rowsPerPage}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchUtils.get(`/products-store?page=${currentPage}&limit=${rowsPerPage}`, true);
 
       setProducts(data.products || []);
       setTotal(data.total || 0);

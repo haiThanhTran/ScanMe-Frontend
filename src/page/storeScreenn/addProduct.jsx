@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import fetchUtils from '../../utils/fetchUtils';
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -41,11 +42,12 @@ function AddProduct() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:9999/api/categories');
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
+      const response = await fetchUtils.get('/categories' , false);
+      setCategories(response);
+    }
+    catch (error) {
       console.error('Error fetching categories:', error);
+      alert('Không thể tải danh sách danh mục. Vui lòng thử lại sau.');
     }
   };
 
@@ -68,27 +70,11 @@ function AddProduct() {
     setUploadLoading(true);
     try {
       const uploadPromises = files.map(async (file) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Authentication token not found. Please login again.');
-        }
+
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('http://localhost:9999/api/cloudinary-upload', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error(`Upload failed for ${file.name}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchUtils.post('/cloudinary-upload', formData, true);
         return data.secure_url;
       });
 
@@ -141,17 +127,9 @@ function AddProduct() {
         images: images
       };
 
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:9999/api/products-store', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(productData)
-      });
+      const response = await fetchUtils.post('/products-store', productData, true);
 
-      if (response.ok) {
+      if (response) {
         handleReset();
         navigate('/store/productManagement');
       } else {

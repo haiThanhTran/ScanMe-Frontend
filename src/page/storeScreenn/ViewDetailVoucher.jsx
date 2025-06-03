@@ -54,6 +54,7 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import fetchUtils from '../../utils/fetchUtils';
 
 const theme = createTheme({
   palette: {
@@ -77,7 +78,7 @@ function ViewDetailVoucher() {
   const [activeTab, setActiveTab] = useState(0);
   const [usageHistory, setUsageHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  
+
   // Form state for editing
   const [formData, setFormData] = useState({
     code: '',
@@ -114,20 +115,11 @@ function ViewDetailVoucher() {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Unauthorized: No token found');
-      }
+      const response = await fetchUtils.get(`/voucher-store/${id}`, true);
+      setVoucher(response);
+      const voucherData = response;
 
-      const response = await axios.get(`http://localhost:9999/api/voucher-store/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
 
-      const voucherData = response.data;
-      setVoucher(voucherData);
-      
       // Set form data for editing
       setFormData({
         code: voucherData.code || '',
@@ -149,7 +141,7 @@ function ViewDetailVoucher() {
 
     } catch (err) {
       console.error('Error fetching voucher detail:', err);
-      setError(err?.response?.data?.message || err.message || 'Unknown error');
+      setError(err?.response?.message || err.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -159,7 +151,7 @@ function ViewDetailVoucher() {
     try {
       setLoadingHistory(true);
       const token = localStorage.getItem('token');
-      
+
       const response = await axios.get(`http://localhost:9999/api/voucher-store/${id}/usage-history`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -177,25 +169,19 @@ function ViewDetailVoucher() {
   const handleSaveChanges = async () => {
     try {
       setSaving(true);
-      const token = localStorage.getItem('token');
 
       const updateData = {
         ...formData,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString()
-      };
+      };      
 
-      await axios.patch(`http://localhost:9999/api/voucher-store/${id}`, updateData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      await fetchUtils.patch(`/voucher-store/${id}`, updateData, true);
 
       // Refresh voucher data
       await fetchVoucherDetail();
       setEditMode(false);
-      
+
     } catch (err) {
       console.error('Error updating voucher:', err);
       setError(err?.response?.data?.message || err.message || 'Error updating voucher');
@@ -274,11 +260,8 @@ function ViewDetailVoucher() {
   const toggleVoucherStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:9999/api/voucher-store/${id}/toggle-status`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+
+      await fetchUtils.patch(`/voucher-store/${id}/toggle-status`, {}, true);
       await fetchVoucherDetail();
     } catch (err) {
       console.error('Error toggling voucher status:', err);
@@ -540,7 +523,7 @@ function ViewDetailVoucher() {
                         Thông tin cơ bản
                       </Typography>
                       <Divider sx={{ mb: 2 }} />
-                      
+
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <TextField
@@ -558,7 +541,7 @@ function ViewDetailVoucher() {
                             }}
                           />
                         </Grid>
-                        
+
                         <Grid item xs={12}>
                           <TextField
                             fullWidth
@@ -650,7 +633,7 @@ function ViewDetailVoucher() {
                         Tiến độ sử dụng
                       </Typography>
                       <Divider sx={{ mb: 2 }} />
-                      
+
                       <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                           <Typography variant="body2">
@@ -737,7 +720,7 @@ function ViewDetailVoucher() {
                         Danh mục áp dụng
                       </Typography>
                       <Divider sx={{ mb: 2 }} />
-                      
+
                       <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
                         {voucher.applicableCategories?.length > 0 ? (
                           voucher.applicableCategories.map((category, index) => (

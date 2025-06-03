@@ -60,29 +60,26 @@ function HomeStore() {
 
   // Static data for charts
   const revenueData = [
-    { name: 'T2', revenue: 12000000, orders: 45 },
-    { name: 'T3', revenue: 19000000, orders: 67 },
-    { name: 'T4', revenue: 15000000, orders: 52 },
-    { name: 'T5', revenue: 25000000, orders: 89 },
-    { name: 'T6', revenue: 22000000, orders: 78 },
-    { name: 'T7', revenue: 28000000, orders: 95 },
-    { name: 'CN', revenue: 31000000, orders: 102 }
+    { name: 'T2', revenue: 300000, orders: 5 },
+    { name: 'T3', revenue: 400000, orders: 10 },
+    { name: 'T4', revenue: 500000, orders: 15 },
+    { name: 'T5', revenue: 600000, orders: 20 },
+    { name: 'T6', revenue: 350000, orders: 9 },
+    { name: 'T7', revenue: 800000, orders: 30 },
+    { name: 'CN', revenue: 900000, orders: 35 },
   ];
 
   const salesByCategory = [
-    { name: 'Điện tử', value: 35, revenue: 45000000, color: '#8884d8' },
-    { name: 'Thời trang', value: 25, revenue: 32000000, color: '#82ca9d' },
-    { name: 'Nhà cửa', value: 20, revenue: 26000000, color: '#ffc658' },
-    { name: 'Sách', value: 12, revenue: 15000000, color: '#ff7300' },
-    { name: 'Khác', value: 8, revenue: 10000000, color: '#0088fe' }
+    { name: 'Đồ ăn', value: 35, revenue: 2000000, color: '#8884d8' },
+    { name: 'Nước uống', value: 25, revenue: 2250000, color: '#82ca9d' },
   ];
 
   const topProducts = [
-    { name: 'iPhone 15 Pro Max', sales: 156, revenue: 390000000, trend: 'up' },
-    { name: 'Samsung Galaxy S24', sales: 134, revenue: 268000000, trend: 'up' },
-    { name: 'MacBook Air M3', sales: 89, revenue: 267000000, trend: 'down' },
-    { name: 'iPad Pro 12.9', sales: 76, revenue: 190000000, trend: 'up' },
-    { name: 'AirPods Pro 2', sales: 203, revenue: 101500000, trend: 'up' }
+    { name: 'Cơm gà chiên mắm', sales: 50, revenue: 1500000, trend: 'up' },
+    { name: 'Trà tắc', sales: 60, revenue: 900000, trend: 'up' },
+    { name: 'Cơm gà lắc phô mai', sales: 30, revenue: 900000, trend: 'down' },
+    { name: 'Bánh mì thập cẩm', sales: 25, revenue: 750000, trend: 'up' },
+    { name: 'Xôi thập cẩm', sales: 10, revenue: 250000, trend: 'up' }
   ];
 
   const monthlyGrowth = [
@@ -95,18 +92,16 @@ function HomeStore() {
   ];
 
   const customerStats = {
-    totalCustomers: 12847,
-    newCustomers: 342,
-    returningCustomers: 8956,
-    customerGrowth: 15.6
+    totalCustomers: 50,
+    newCustomers: 5,
+    returningCustomers: 30,
+    customerGrowth: 10 
   };
 
   const orderStats = {
-    totalOrders: 1523,
-    pendingOrders: 89,
-    processingOrders: 156,
-    shippedOrders: 234,
-    completedOrders: 1044
+    totalOrders: 150,
+    pendingOrders: 10,
+    completedOrders: 140
   };
 
   const formatCurrency = (amount) => {
@@ -174,7 +169,7 @@ function HomeStore() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Tổng Doanh Thu"
-            value={formatCurrency(152000000)}
+            value={formatCurrency(4250000)}
             subtitle="+12.5% so với tuần trước"
             icon={<AttachMoney />}
             trend="up"
@@ -184,7 +179,7 @@ function HomeStore() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Đơn Hàng"
-            value="1,523"
+            value="125"
             subtitle="+8.2% so với tuần trước"
             icon={<ShoppingCart />}
             trend="up"
@@ -193,8 +188,8 @@ function HomeStore() {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Khách Hàng"
-            value="12,847"
+            title="Khách Hàng Tiếp Cận"
+            value="40"
             subtitle="+15.6% khách hàng mới"
             icon={<People />}
             trend="up"
@@ -204,7 +199,7 @@ function HomeStore() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Sản Phẩm"
-            value="2,456"
+            value="15"
             subtitle="89 sản phẩm mới"
             icon={<Inventory />}
             trend="up"
@@ -351,26 +346,6 @@ function HomeStore() {
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Chờ xử lý
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box textAlign="center" p={2}>
-                    <Typography variant="h4" color="info.main">
-                      {orderStats.processingOrders}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Đang xử lý
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box textAlign="center" p={2}>
-                    <Typography variant="h4" color="primary.main">
-                      {orderStats.shippedOrders}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Đang giao
                     </Typography>
                   </Box>
                 </Grid>

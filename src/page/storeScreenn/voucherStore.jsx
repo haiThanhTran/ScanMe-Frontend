@@ -56,6 +56,7 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import fetchUtils from '../../utils/fetchUtils';
 
 const theme = createTheme({
   palette: {
@@ -113,18 +114,14 @@ function VoucherStore() {
         params.append('status', filterStatus);
       }
 
-      const response = await axios.get(`http://localhost:9999/api/voucher-store?${params}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await fetchUtils.get(`/voucher-store?${params}`, true);
 
-      setVouchers(response.data.vouchers || []);
-      setTotalVouchers(response.data.total || 0);
-      setTotalPages(response.data.totalPages || 0);
+      setVouchers(response.vouchers || []);
+      setTotalVouchers(response.total || 0);
+      setTotalPages(response.totalPages || 0);
     } catch (err) {
       console.error('Error fetching vouchers:', err);
-      setError(err?.response?.data?.message || err.message || 'Unknown error');
+      setError(err?.response?.message || err.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -224,11 +221,8 @@ function VoucherStore() {
 
   const handleDeleteVoucher = async () => {
     try {
-      await axios.delete(`http://localhost:9999/api/voucher-store/${selectedVoucherId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+
+      await fetchUtils.remove(`/voucher-store/${selectedVoucherId}`, true);
       await fetchVouchers();
     } catch (err) {
       console.error('Error deleting voucher:', err);

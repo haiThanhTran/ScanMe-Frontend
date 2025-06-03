@@ -45,6 +45,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import fetchUtils from '../../utils/fetchUtils';
 
 const theme = createTheme({
   palette: {
@@ -94,11 +95,8 @@ function AddVoucher() {
 
   const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:9999/api/categories', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCategories(response.data || []);
+      const response = await fetchUtils.get('/categories', true);
+      setCategories(response);
     } catch (err) {
       console.error('Error fetching categories:', err);
     }
@@ -212,12 +210,7 @@ function AddVoucher() {
         isDraft: isDraft
       };
 
-      const response = await axios.post('http://localhost:9999/api/voucher-store', submitData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      await fetchUtils.post('/voucher-store', submitData, true)
 
       setSuccess(true);
       setError(null);

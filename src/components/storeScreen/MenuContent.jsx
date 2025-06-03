@@ -181,7 +181,7 @@ const MenuContent = ({ onMenuItemClick }) => {
               }}
             >
               <StyledListItemButton 
-                onClick={() => item.text === "Log out" ? handleLogOut() : navigate('/store/settings')}
+                onClick={() => item.text === "Log out" ? handleLogOut() : console.log('Settings clicked')}
                 isSelected={false}
               >
                 <StyledListItemIcon isSelected={false}>

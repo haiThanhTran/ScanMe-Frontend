@@ -27,6 +27,7 @@ import {
   Cancel as CancelIcon,
   ShoppingBag as ShoppingBagIcon
 } from '@mui/icons-material';
+import fetchUtils from '../../utils/fetchUtils';
 
 function StoreManagement() {
   const [store, setStore] = useState(null);
@@ -47,28 +48,7 @@ function StoreManagement() {
   const fetchStoreData = async () => {
     try {
       setLoading(true);
-      // Get token from localStorage
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        setError('Authentication token not found. Please login again.');
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch('http://localhost:9999/api/stores/store-by-userId', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchUtils.get('/stores/store-by-userId', true);
       setStore(data);
       setFormData({
         name: data.name,
@@ -107,20 +87,8 @@ function StoreManagement() {
       setSaveLoading(true);
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // In a real implementation, you would send the updated data to the backend
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:9999/api/stores/update/store-by-userId', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
+      
+      await fetchUtils.put('/stores/update/store-by-userId', formData, true);
 
       // For now, just update the local state to simulate success
       setStore({

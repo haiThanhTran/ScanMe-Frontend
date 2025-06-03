@@ -1,8 +1,8 @@
-import { 
-  Modal, 
-  Typography, 
-  TextField, 
-  Button, 
+import {
+  Modal,
+  Typography,
+  TextField,
+  Button,
   FormControl,
   InputLabel,
   Select,
@@ -13,6 +13,7 @@ import {
   FormControlLabel
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
+import fetchUtils from '../../utils/fetchUtils';
 
 function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts }) {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
     categories: [],
     images: []
   });
-  
+
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [images, setImages] = useState([]);
@@ -56,10 +57,8 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
 
   const fetchCategories = async () => {
     try {
-      // Thay thế bằng API endpoint thực của bạn
-      const response = await fetch('http://localhost:9999/api/categories');
-      const data = await response.json();
-      setCategories(data);
+      const response = await fetchUtils.get('/categories');
+      setCategories(response || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -84,32 +83,16 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
     setUploadLoading(true);
     try {
       const uploadPromises = files.map(async (file) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Authentication token not found. Please login again.');
-        }
+
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('http://localhost:9999/api/cloudinary-upload', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error(`Upload failed for ${file.name}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchUtils.post('/cloudinary-upload', formData, true);
         return data.secure_url;
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
-      
+
       // Thêm các URL mới vào mảng images hiện tại
       const newImages = [...images, ...uploadedUrls];
       setImages(newImages);
@@ -117,10 +100,10 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
         ...prev,
         images: newImages
       }));
-      
+
       // Reset input file
       event.target.value = '';
-      
+
     } catch (error) {
       console.error('Error uploading images:', error);
       alert('Upload hình ảnh thất bại. Vui lòng thử lại.');
@@ -150,17 +133,9 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
         throw new Error('Authentication token not found. Please login again.');
       }
 
-      // Gọi API update product
-      const response = await fetch(`http://localhost:9999/api/products-store/${dataDetail._id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(updatedData)
-      });
+      const response = await fetchUtils.patch(`/products-store/${dataDetail._id}`, updatedData, true);
 
-      if (response.ok) {
+      if (response) {
         console.log('Product updated successfully');
         handleClose();
         dataProducts();
@@ -196,7 +171,7 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
         <Typography id="edit-product-modal" variant="h6" component="h2" mb={3}>
           Chỉnh sửa sản phẩm
         </Typography>
-        
+
         <Grid container spacing={2}>
           {/* Tên sản phẩm */}
           <Grid item xs={12}>
@@ -255,7 +230,7 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
                 onChange={handleCategoryChange}
                 label="Danh mục"
               >
-                {categories.map((category) => (
+                {categories && categories.map((category) => (
                   <MenuItem key={category._id} value={category._id}>
                     {category.name}
                   </MenuItem>
@@ -269,7 +244,7 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
             <Typography variant="subtitle1" mb={1}>
               Hình ảnh sản phẩm
             </Typography>
-            
+
             {/* File input */}
             <Box display="flex" alignItems="center" gap={2} mb={2}>
               <input
@@ -282,22 +257,22 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
                 disabled={uploadLoading}
               />
               <label htmlFor="image-upload-input">
-                <Button 
-                  variant="outlined" 
+                <Button
+                  variant="outlined"
                   component="span"
                   disabled={uploadLoading}
                 >
                   {uploadLoading ? 'Đang upload...' : 'Chọn hình ảnh'}
                 </Button>
               </label>
-              
+
               {uploadLoading && (
                 <Typography variant="body2" color="primary">
                   Đang upload hình ảnh...
                 </Typography>
               )}
             </Box>
-            
+
             {/* Current Images Display */}
             {images.length > 0 && (
               <Box>
@@ -307,13 +282,13 @@ function ModelEditProduct({ dataDetail, openModal, setOpenModal, dataProducts })
                 <Box display="flex" flexWrap="wrap" gap={2}>
                   {images.map((imageUrl, index) => (
                     <Box key={index} position="relative">
-                      <img 
-                        src={imageUrl} 
-                        alt={`Product ${index + 1}`} 
-                        style={{ 
-                          width: '100px', 
-                          height: '100px', 
-                          objectFit: 'cover', 
+                      <img
+                        src={imageUrl}
+                        alt={`Product ${index + 1}`}
+                        style={{
+                          width: '100px',
+                          height: '100px',
+                          objectFit: 'cover',
                           borderRadius: '8px',
                           border: '1px solid #ddd'
                         }}
