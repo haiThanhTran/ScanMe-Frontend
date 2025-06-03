@@ -51,45 +51,64 @@ const Login = () => {
   }, []);
 
   // Keeping the existing handleSubmit logic
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const username = data.get("username"); // API uses username (or email)
-    const password = data.get("password");
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const username = data.get("username");
+  const password = data.get("password");
 
-    if (!username || !password) {
-      notifyError("Email/Username and Password are required.");
-      return;
-    }
+  if (!username || !password) {
+    notifyError("Email/Username và Password là bắt buộc.");
+    return;
+  }
 
-    try {
-      setIsLoading(true);
-      const resData = await AuthService.login(data); // AuthService.login nhận FormData
-      if (resData.status === 200) {
-        const decode = jwtDecode(resData.data);
-        localStorage.setItem("token", resData.data); // Lưu token
-        localStorage.setItem("role", decode.role);
-        localStorage.setItem("username", username); // Lưu username đã nhập
-        notifySuccess("Login successful!");
-        const redirectUrl = localStorage.getItem("redirectUrl");
-        if (redirectUrl) {
-          localStorage.removeItem("redirectUrl");
-          navigate(redirectUrl);
-        } else {
-          if (decode.role === "SUPER_ADMIN") navigate("/admin/homeAdmin");
-          else if (decode.role === "GUEST_ROLE_MEMBER") navigate("/");
-          else navigate("/403");
-        }
-      } else {
-         notifyError(resData.data?.message || "Login failed! Please check your credentials.");
+  try {
+    setIsLoading(true);
+    const resData = await AuthService.login(data);
+
+    if (resData.status === 200) {
+      const token = resData.data;
+      const decode = jwtDecode(token);
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", decode.role);
+      localStorage.setItem("username", username);
+
+      const redirectUrl = localStorage.getItem("redirectUrl");
+      if (redirectUrl) {
+        localStorage.removeItem("redirectUrl");
+        notifySuccess("Đăng nhập thành công!");
+        navigate(redirectUrl);
+        return;
       }
-    } catch (e) {
-      notifyError(e.response?.data?.message || e.message || "An error occurred during login.");
-      console.error("Login error:", e);
-    } finally {
-      setIsLoading(false);
+
+      switch (decode.role) {
+        case "SUPER_ADMIN":
+          notifySuccess("Đăng nhập thành công!");
+          navigate("/admin/homeAdmin");
+          break;
+        case "STORE_MANAGER":
+          notifySuccess("Đăng nhập thành công!");
+          navigate("/store/homeStore");
+          break;
+        case "GUEST_ROLE_MEMBER":
+          notifySuccess("Đăng nhập thành công!");
+          navigate("/");
+          break;
+        default:
+          notifyError("Bạn không có quyền truy cập!");
+          navigate("/403");
+      }
+    } else {
+      notifyError(resData.data?.message || "Đăng nhập thất bại! Vui lòng kiểm tra lại.");
     }
-  };
+  } catch (e) {
+    notifyError(e.response?.data?.message || e.message || "Đã xảy ra lỗi khi đăng nhập.");
+    console.error("Login error:", e);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 

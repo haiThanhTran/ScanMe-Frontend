@@ -9,14 +9,13 @@ import ToastNotification from "./components/notification/ToastNotification.jsx";
 import Dashboard from "./page/adminScreen/DashboardScreen.jsx";
 import HomePage from "./components/homePage/homepage.jsx";
 import MainContent from "./components/homePage/mainContent.jsx";
-import RoleBaseRoute from "./security/RoleBaseRoute.jsx";
-import LayoutUser from "./page/customers/userInformation/LayoutUser.jsx";
-import Profile from "./page/customers/ProfilePage.jsx";
+import RoleBaseRoute from "../src/security/RoleBaseRoute.jsx";
+import LayoutUser from "../src/page/customers/userInformation/LayoutUser.jsx";
+import Profile from "../src/page/customers/ProfilePage.jsx";
+import DashboardStore from "./page/storeScreenn/DashboardStore.jsx";
 import ProductsPage from "./page/ProductPages/ProductsPage.jsx";
 import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
 import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
-import MyVouchersPage from "./page/customers/MyVouchersPage.jsx";
-import OrderHistoryPage from "./page/customers/OrderHistoryPage.jsx";
 import ScrollToTop from "./utils/ScrollToTop.jsx"; // <<<<<< IMPORT COMPONENT MỚI
 import FAQPage from "./components/homePage/faqPage.jsx"; // Import FAQPage
 
@@ -50,6 +49,17 @@ function App() {
                 </RoleBaseRoute>
               }
             />
+          </Route>
+          <Route element={<PrivateRoute />}>
+            <Route
+              path="/store/*"
+              element={
+                <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
+                  <DashboardStore />
+                </RoleBaseRoute>
+              }
+            />
+            <Route path="/profile" element={<Profile />} />
           </Route>
           {/* Catch-all route for undefined routes */}
           <Route path="*" element={<Navigate to="/404" />} />

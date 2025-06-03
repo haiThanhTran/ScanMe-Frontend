@@ -25,16 +25,24 @@ const getAuthToken = () => {
 const fetchApi = async (endpoint, method, body, requiresAuth = true) => {
   try {
     const url = `${apiConfig.baseUrl}${endpoint}`;
+    const isFormData = body instanceof FormData;
+    const headers = requiresAuth
+      ? apiConfig.getAuthHeaders(getAuthToken())
+      : apiConfig.headers;
+
     const options = {
       method,
-      headers: requiresAuth
-        ? apiConfig.getAuthHeaders(getAuthToken())
-        : apiConfig.headers,
+      headers: isFormData ? { ...headers } : { ...headers, 'Content-Type': 'application/json' },
+      body: isFormData ? body : body ? JSON.stringify(body) : null
     };
 
-    if (body && (method === "POST" || method === "PUT")) {
-      options.body = JSON.stringify(body);
+    if (isFormData) {
+      delete options.headers['Content-Type'];
     }
+
+    // if (body && (method === "POST" || method === "PUT" || method === "PATCH")) {
+    //   options.body = JSON.stringify(body);
+    // }
 
     const response = await fetch(url, options);
     const data = await response.json();
@@ -75,6 +83,9 @@ const post = (endpoint, body, requiresAuth = true) =>
 const put = (endpoint, body, requiresAuth = true) =>
   fetchApi(endpoint, "PUT", body, requiresAuth);
 
+const patch = (endpoint, body, requiresAuth = true) =>
+  fetchApi(endpoint, "PATCH", body, requiresAuth);
+
 /**
  * DELETE request wrapper
  * @param {string} endpoint - API endpoint
@@ -90,6 +101,7 @@ const fetchUtils = {
   post,
   put,
   remove,
+  patch,
 };
 
 export default fetchUtils;

@@ -4,6 +4,9 @@ import { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { useEffect } from "react";
+import axios from "axios";
+import fetchUtils from "../../utils/fetchUtils";
 // Keyframes for animations
 const fadeInUp = keyframes`
   from {
@@ -546,7 +549,19 @@ const MainContent = () => {
   ];
 
   const navigate = useNavigate();
-
+  const [dataStore , setDataStore] = useState([]);
+const fetchDataStore = async () => {
+  try {
+    const response = await fetchUtils.get("/stores", false);
+    setDataStore(response);
+  } catch (error) {
+    console.error("Error fetching stores:", error);
+  }
+};
+  useEffect(() => {
+    fetchDataStore();
+  }, []);
+  console.log("Data Store:", dataStore);
   return (
     <Container style={{ overflow: "hidden" }}>
       {/* Floating Food Stickers */}
@@ -700,7 +715,7 @@ const MainContent = () => {
             </Paragraph>{" "}
           </div>
           <PartnersGrid>
-            {partners.map((partner, index) => (
+            {dataStore.slice(0, 6).map((partner, index) => (
               <PartnerCard key={index}>
                 <PartnerLogo src={partner.logo} alt={partner.name} />
               </PartnerCard>
