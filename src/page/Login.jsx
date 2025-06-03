@@ -64,12 +64,12 @@ const Login = () => {
 
     try {
       setIsLoading(true);
-      const resData = await AuthService.login(data); // AuthService.login expects FormData
+      const resData = await AuthService.login(data); // AuthService.login nhận FormData
       if (resData.status === 200) {
-        const decode = jwtDecode(resData.data); // Assuming resData.data contains the token string
-        localStorage.setItem("token", resData.data); // Store token
+        const decode = jwtDecode(resData.data);
+        localStorage.setItem("token", resData.data); // Lưu token
         localStorage.setItem("role", decode.role);
-        localStorage.setItem("username", username); // Store entered username
+        localStorage.setItem("username", username); // Lưu username đã nhập
         notifySuccess("Login successful!");
         const redirectUrl = localStorage.getItem("redirectUrl");
         if (redirectUrl) {
@@ -81,19 +81,10 @@ const Login = () => {
           else navigate("/403");
         }
       } else {
-        // Assuming backend returns an error structure with message
-        notifyError(
-          resData.data?.message ||
-            "Login failed! Please check your credentials."
-        );
+         notifyError(resData.data?.message || "Login failed! Please check your credentials.");
       }
     } catch (e) {
-      // Handle API errors
-      const errorMessage =
-        e.response?.data?.message ||
-        e.message ||
-        "An error occurred during login.";
-      notifyError(errorMessage);
+      notifyError(e.response?.data?.message || e.message || "An error occurred during login.");
       console.error("Login error:", e);
     } finally {
       setIsLoading(false);

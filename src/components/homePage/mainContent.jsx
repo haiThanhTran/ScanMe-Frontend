@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
-
+import logo from "../../assets/logo.png";
 // Keyframes for animations
 const fadeInUp = keyframes`
   from {
@@ -548,12 +548,12 @@ const MainContent = () => {
   const navigate = useNavigate();
 
   return (
-    <Container>
+    <Container style={{ overflow: "hidden" }}>
       {/* Floating Food Stickers */}
       {[...Array(30)].map((_, i) => (
         <FoodSticker
           key={i}
-      style={{
+          style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
           }}
@@ -605,10 +605,7 @@ const MainContent = () => {
               </StatsGrid>
             </HeroText>
             <HeroImageContainer>
-              <HeroImage
-                src="/logoreal.svg?height=600&width=400"
-                alt="ScanMe App Interface"
-              />
+              <HeroImage src={logo} alt="ScanMe App Interface" />
               <FloatingCircle
                 size="5rem"
                 color="linear-gradient(to right, #f87171, #f472b6)"
@@ -625,7 +622,7 @@ const MainContent = () => {
       </Section>
 
       {/* Features Section */}
-      <Section gray>
+      <Section gray style={{ paddingBottom: "20px" }}>
         <InnerContainer>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
             <Subtitle>
@@ -692,7 +689,7 @@ const MainContent = () => {
       </Section>
 
       {/* Partners Section */}
-      <Section gray>
+      <Section gray style={{ paddingBottom: "20px" }}>
         <InnerContainer>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
             <Subtitle>
@@ -713,7 +710,7 @@ const MainContent = () => {
       </Section>
 
       {/* Testimonials */}
-      <Section>
+      <Section style={{ paddingBottom: "20px" }}>
         <InnerContainer>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
             <Subtitle>
@@ -773,7 +770,7 @@ const MainContent = () => {
             >
               Mua hàng ngay
             </Button>
-      </div>
+          </div>
           <CTANote style={{ marginTop: "1.5rem", color: "black" }}>
             Miễn phí sử dụng • Không phí ẩn • Hỗ trợ 24/7
           </CTANote>

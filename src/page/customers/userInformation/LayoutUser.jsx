@@ -6,8 +6,7 @@ import {
   ShoppingCartOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  LogoutOutlined,
-  SettingOutlined,
+  LogoutOutlined
   // LeftOutlined, // Đã thay bằng MenuFoldOutlined/MenuUnfoldOutlined
 } from "@ant-design/icons";
 import {
@@ -30,7 +29,7 @@ import MyVouchersPage from "../MyVouchersPage";
 import OrderHistoryPage from "../OrderHistoryPage";
 import CartPage from "../Carts/CartPage";
 import styles from "./LayoutUser.module.css";
-
+import logo from "../../../assets/logo.png";
 const { Sider, Content } = AntLayout;
 const { Text } = Typography;
 
@@ -71,8 +70,6 @@ const LayoutUser = () => {
     selectedKey = "orders";
   else if (location.pathname.startsWith("/information/my-vouchers"))
     selectedKey = "vouchers";
-  else if (location.pathname.startsWith("/information/settings"))
-    selectedKey = "settings";
   else if (location.pathname.startsWith("/information/profile"))
     selectedKey = "profile";
   else if (
@@ -96,14 +93,12 @@ const LayoutUser = () => {
       case "vouchers":
         navigate("/information/my-vouchers");
         break;
-      case "settings":
-        navigate("/information/settings");
-        break; // Ví dụ
       case "logout":
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         localStorage.removeItem("role");
         localStorage.removeItem("avatar_url");
+        localStorage.removeItem("redirectUrl");
         setCurrentUser(null);
         navigate("/login");
         break;
@@ -120,8 +115,7 @@ const LayoutUser = () => {
   ];
 
   const bottomMenuItems = [
-    { key: "settings", icon: <SettingOutlined />, label: "Settings" }, // Label giống mẫu
-    { key: "logout", icon: <LogoutOutlined />, label: "Logout" }, // Label giống mẫu
+    { key: "logout", icon: <LogoutOutlined />, label: "Đăng xuất" }, // Label giống mẫu
   ];
 
   const toggleCollapsed = () => {
@@ -142,13 +136,21 @@ const LayoutUser = () => {
         <div className={styles.siderHeader}>
           {!collapsed && (
             <img
-              src="/logo-dark-theme.png"
+              src={logo}
               alt="Logo"
               className={styles.siderLogo}
               onClick={() => navigate("/")}
             />
           )}
           {/* Nút collapse/expand sẽ nằm ở đây hoặc dưới cùng */}
+          <div className={styles.siderCollapseTriggerContainer}>
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={toggleCollapsed}
+              className={styles.collapseButtonBottom}
+            />
+          </div>
         </div>
 
         <Menu
@@ -199,14 +201,7 @@ const LayoutUser = () => {
             className={`${styles.userMenu} ${styles.userMenuFooter}`}
             onClick={handleMenuClick}
           />
-          <div className={styles.siderCollapseTriggerContainer}>
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={toggleCollapsed}
-              className={styles.collapseButtonBottom}
-            />
-          </div>
+          
         </div>
       </Sider>
       <AntLayout
@@ -219,7 +214,6 @@ const LayoutUser = () => {
             <Route path="cart" element={<CartPage />} />
             <Route path="my-vouchers" element={<MyVouchersPage />} />
             <Route path="order-history" element={<OrderHistoryPage />} />
-            <Route path="settings" element={<div>Trang Cài đặt</div>} />
             <Route index element={<Navigate to="profile" replace />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>

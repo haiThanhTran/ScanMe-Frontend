@@ -12,7 +12,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { notifySuccess } from "../../components/notification/ToastNotification.jsx";
 import styles from "./Header.module.css";
-
+import logo from "../../assets/logo.png";
 const { Header: AntHeader } = Layout;
 
 function Header() {
@@ -36,6 +36,8 @@ function Header() {
       localStorage.removeItem("token");
       localStorage.removeItem("username");
       localStorage.removeItem("role");
+      localStorage.removeItem("redirectUrl");
+
       setIsLoggedIn(false);
       setUser(null);
       if (shouldNavigate) {
@@ -188,22 +190,21 @@ function Header() {
         }}
       >
         {/* Left: Logo */}
-        <div style={{ display: "flex", alignItems: "center", height: "auto" }}>
+        <div style={{ display: "flex",padding: "10px", alignItems: "center", height: "auto" }}>
           <img
             onClick={() => navigate("/")}
-            src="./logoreal.svg"
+            src={logo}
             alt="logo"
             style={{
-              height: "56px",
+              height: "80px",
               width: "auto",
+              
               objectFit: "contain",
               marginRight: "4px",
               cursor: "pointer",
             }}
           />
-          <span style={{ fontSize: "20px", fontWeight: "bold", color: "red" }}>
-            ScanMe
-          </span>
+          
         </div>
 
         {/* Center: Menu */}

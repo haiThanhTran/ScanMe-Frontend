@@ -32,6 +32,7 @@
   height: 60px; /* Chiều cao header Sider */
   flex-shrink: 0;
   /* border-bottom: 1px solid rgba(255, 255, 255, 0.08); */
+  /* background-color: #cbd5e1; */
 }
 /* Khi Sider mở rộng, nút collapse có thể đẩy sang phải */
 .userSider:not(.ant-layout-sider-collapsed) .siderHeader {
@@ -41,13 +42,14 @@
 .siderLogo { /* Nếu bạn có logo */
   height: 30px;
   margin: 0 auto 0 16px; /* Căn trái logo, đẩy nút collapse sang phải */
-  transition: opacity 0.2s, margin-left 0.2s;
+  transition: opacity 0.5s, margin-left 0.5s;
 }
 .siderCollapsed .siderLogo {
   opacity: 0;
   pointer-events: none;
   margin-left: -100px;
 }
+
 
 .collapseButton { /* Nút collapse/expand ở header của Sider */
   color: #94a3b8 !important;

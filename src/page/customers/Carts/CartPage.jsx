@@ -468,7 +468,7 @@ const CartPage = () => {
             <div className={styles.sidebarFixedContainer}>
               <div className={styles.sidebarContentInner}>
                 <Title level={3} className={styles.sidebarTitle}>
-                  CARD
+                  Giỏ Hàng
                 </Title>
                 <div className={styles.sidebarItemList}>
                   {cartItems.length > 0 ? (
@@ -524,7 +524,7 @@ const CartPage = () => {
                       }
                       icon={<ClearOutlined />}
                     >
-                      Close
+                      Xóa Hết
                     </Button>
                   </Popconfirm>
                 </div>

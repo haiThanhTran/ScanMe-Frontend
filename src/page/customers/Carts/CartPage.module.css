@@ -296,6 +296,8 @@
 .finalTotalRow .summaryValueLarge {
     font-size: 1.15em !important; /* To hơn cho tổng cộng cuối */
     font-weight: 600 !important;
+    color: #f0f0f0 !important;
+    margin-right: 5px;
 }
 .finalTotalRow .summaryValueLarge {
     color: #FFD60A !important; /* Màu vàng cho tổng tiền cuối */
