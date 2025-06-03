@@ -8,6 +8,11 @@ import VoucherStore from "./voucherStore.jsx";
 import StoreManagement from "./storeManagement.jsx";
 import SettingProfile from "./settingProfile.jsx";
 import OrderStore from "./orderStore.jsx";
+import AddProduct from "./addProduct.jsx";
+import ProductStoreDetail from "./productStoreDetail.jsx";
+import AddVoucher from "./addVoucher.jsx";
+import ViewDetailVoucher from "./ViewDetailVoucher.jsx";
+
 
 
 export default function DashboardStore() {
@@ -31,11 +36,43 @@ export default function DashboardStore() {
               </RoleBaseRoute>
             }
           />
+           <Route
+            path="/voucherManagement/create"
+            element={
+              <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
+                <AddVoucher />
+              </RoleBaseRoute>
+            }
+          />
+          <Route
+            path="/voucherManagement/:id"
+            element={
+              <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
+                <ViewDetailVoucher />
+              </RoleBaseRoute>
+            }
+          />
           <Route
             path="/productManagement"
             element={
               <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
                 <ProductStore />
+              </RoleBaseRoute>
+            }
+          />
+           <Route
+            path="/productManagement/create"
+            element={
+              <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
+                <AddProduct />
+              </RoleBaseRoute>
+            }
+          />
+           <Route
+            path="/productManagement/:id"
+            element={
+              <RoleBaseRoute allowedRoles={["STORE_MANAGER"]}>
+                <ProductStoreDetail />
               </RoleBaseRoute>
             }
           />

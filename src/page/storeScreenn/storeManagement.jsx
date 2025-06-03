@@ -14,16 +14,13 @@ import {
   TextField,
   Button,
   Stack,
-  IconButton,
   Chip,
-  Tooltip,
-  Fade
 } from '@mui/material';
-import { 
-  Store as StoreIcon, 
-  Phone as PhoneIcon, 
-  LocationOn as LocationOnIcon, 
-  Person as PersonIcon, 
+import {
+  Store as StoreIcon,
+  Phone as PhoneIcon,
+  LocationOn as LocationOnIcon,
+  Person as PersonIcon,
   CalendarToday as CalendarTodayIcon,
   Edit as EditIcon,
   Save as SaveIcon,
@@ -52,14 +49,14 @@ function StoreManagement() {
       setLoading(true);
       // Get token from localStorage
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         setError('Authentication token not found. Please login again.');
         setLoading(false);
         return;
       }
 
-      const response = await fetch('http://localhost:9999/api/store/store-by-userId', {
+      const response = await fetch('http://localhost:9999/api/stores/store-by-userId', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -110,10 +107,10 @@ function StoreManagement() {
       setSaveLoading(true);
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // In a real implementation, you would send the updated data to the backend
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:9999/api/store/update/store-by-userId', {
+      const response = await fetch('http://localhost:9999/api/stores/update/store-by-userId', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -124,7 +121,7 @@ function StoreManagement() {
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-      
+
       // For now, just update the local state to simulate success
       setStore({
         ...store,
@@ -132,7 +129,7 @@ function StoreManagement() {
         address: formData.address,
         phone: formData.phone
       });
-      
+
       setIsEditing(false);
     } catch (err) {
       console.error('Failed to save store data', err);
@@ -155,8 +152,8 @@ function StoreManagement() {
   if (error) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-        <Alert 
-          severity="error" 
+        <Alert
+          severity="error"
           variant="filled"
           sx={{ maxWidth: 500, boxShadow: 3, bgcolor: '#d32f2f' }}
         >
@@ -169,7 +166,7 @@ function StoreManagement() {
   if (!store) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-        <Alert 
+        <Alert
           severity="info"
           variant="filled"
           sx={{ maxWidth: 500, boxShadow: 3, bgcolor: '#ef9a9a', color: '#731717' }}
@@ -191,11 +188,11 @@ function StoreManagement() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper 
-        elevation={3} 
-        sx={{ 
-          p: 3, 
-          mb: 4, 
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          mb: 4,
           borderRadius: 2,
           backgroundImage: 'linear-gradient(to right, #ffffff, #fff5f5)',
           borderTop: '4px solid #e53935'
@@ -208,13 +205,13 @@ function StoreManagement() {
               Store Management
             </Typography>
           </Box>
-          <Button 
-            variant={isEditing ? "outlined" : "contained"} 
+          <Button
+            variant={isEditing ? "outlined" : "contained"}
             onClick={handleEditToggle}
             startIcon={isEditing ? <CancelIcon /> : <EditIcon />}
-            sx={{ 
-              borderRadius: 8, 
-              px: 3, 
+            sx={{
+              borderRadius: 8,
+              px: 3,
               bgcolor: isEditing ? 'transparent' : '#d32f2f',
               color: isEditing ? '#d32f2f' : 'white',
               borderColor: isEditing ? '#d32f2f' : 'transparent',
@@ -227,7 +224,7 @@ function StoreManagement() {
             {isEditing ? "Cancel" : "Edit Store"}
           </Button>
         </Box>
-        
+
         <Divider sx={{ mb: 3, borderColor: '#ffcdd2' }} />
 
         {isEditing ? (
@@ -244,7 +241,7 @@ function StoreManagement() {
                   InputProps={{
                     startAdornment: <StoreIcon sx={{ mr: 1, color: '#d32f2f' }} />,
                   }}
-                  sx={{ 
+                  sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 2
                     },
@@ -268,7 +265,7 @@ function StoreManagement() {
                   InputProps={{
                     startAdornment: <PhoneIcon sx={{ mr: 1, color: '#d32f2f' }} />,
                   }}
-                  sx={{ 
+                  sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 2
                     },
@@ -294,7 +291,7 @@ function StoreManagement() {
                   InputProps={{
                     startAdornment: <LocationOnIcon sx={{ mr: 1, mt: 1, color: '#d32f2f' }} />,
                   }}
-                  sx={{ 
+                  sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 2
                     },
@@ -308,11 +305,11 @@ function StoreManagement() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Button 
-                  variant="contained" 
-                  sx={{ 
-                    borderRadius: 2, 
-                    py: 1.5, 
+                <Button
+                  variant="contained"
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.5,
                     bgcolor: '#d32f2f',
                     '&:hover': {
                       bgcolor: '#b71c1c'
@@ -332,8 +329,8 @@ function StoreManagement() {
         ) : (
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
-              <Card sx={{ 
-                height: '100%', 
+              <Card sx={{
+                height: '100%',
                 borderRadius: 3,
                 boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
                 transition: 'transform 0.3s',
@@ -342,29 +339,31 @@ function StoreManagement() {
                 },
                 borderTop: '3px solid #d32f2f'
               }}>
-                <CardContent sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
+                <CardContent sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                   textAlign: 'center',
                   py: 4
                 }}>
-                  <Avatar 
-                    src={store.logo || "/api/placeholder/150/150"} 
+                  <Avatar
+                    src={store.logo || "/api/placeholder/150/150"}
                     alt={store.name}
-                    sx={{ 
-                      width: 150, 
-                      height: 150, 
+                    sx={{
+                      width: 150,
+                      height: 150,
                       mb: 3,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)' 
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      objectFit: 'cover'
                     }}
                   />
+
                   <Typography variant="h5" component="h2" fontWeight="bold" gutterBottom>
                     {store.name}
                   </Typography>
-                  <Chip 
-                    label={`ID: ${store._id.substring(0, 8)}...`} 
-                    size="small" 
+                  <Chip
+                    label={`ID: ${store._id.substring(0, 8)}...`}
+                    size="small"
                     sx={{ mb: 2, bgcolor: '#ffebee', color: '#d32f2f', borderColor: '#ffcdd2' }}
                     variant="outlined"
                   />
@@ -377,9 +376,9 @@ function StoreManagement() {
                 </CardContent>
               </Card>
             </Grid>
-            
+
             <Grid item xs={12} md={8}>
-              <Card sx={{ 
+              <Card sx={{
                 height: '100%',
                 borderRadius: 3,
                 boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
@@ -389,7 +388,7 @@ function StoreManagement() {
                   <Typography variant="h6" component="h3" fontWeight="bold" sx={{ mb: 3, color: '#d32f2f' }}>
                     Chi tiết cửa hàng
                   </Typography>
-                  
+
                   <Stack spacing={3}>
                     <Paper elevation={0} sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: 2, borderLeft: '3px solid #ef5350' }}>
                       <Box display="flex" alignItems="center">
@@ -406,7 +405,7 @@ function StoreManagement() {
                         </Box>
                       </Box>
                     </Paper>
-                    
+
                     <Paper elevation={0} sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: 2, borderLeft: '3px solid #ef5350' }}>
                       <Box display="flex" alignItems="center">
                         <Avatar sx={{ bgcolor: '#ffebee', mr: 2 }}>
@@ -422,7 +421,7 @@ function StoreManagement() {
                         </Box>
                       </Box>
                     </Paper>
-                    
+
                     <Paper elevation={0} sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: 2, borderLeft: '3px solid #ef5350' }}>
                       <Box display="flex" alignItems="center">
                         <Avatar sx={{ bgcolor: '#ffebee', mr: 2 }}>
@@ -438,7 +437,7 @@ function StoreManagement() {
                         </Box>
                       </Box>
                     </Paper>
-                    
+
                     <Paper elevation={0} sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: 2, borderLeft: '3px solid #ef5350' }}>
                       <Box display="flex" alignItems="center">
                         <Avatar sx={{ bgcolor: '#ffebee', mr: 2 }}>

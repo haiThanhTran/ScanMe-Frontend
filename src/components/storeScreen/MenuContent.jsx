@@ -123,7 +123,7 @@ const MenuContent = ({ onMenuItemClick }) => {
     }}>
       <List>
         {mainListItems.map((item, index) => {
-          const isSelected = location.pathname === `/store/${item.path}`;
+          const isSelected = location.pathname.includes(item.path);
           return (
             <ListItem
               key={index}
