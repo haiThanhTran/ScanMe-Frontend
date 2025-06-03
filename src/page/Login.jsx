@@ -1,165 +1,76 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import MuiCard from "@mui/material/Card";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import { keyframes, styled } from "@mui/material/styles";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Link as MuiLink,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Avatar,
+  ThemeProvider,
+  CssBaseline,
+  InputAdornment,
+  IconButton,
+  FormControl,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined"; // Icon for username/email - Not used in final UI, keeping for reference
+import Visibility from "@mui/icons-material/Visibility"; // Icon for password visibility
+import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Icon for password visibility
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/loading/Loading.jsx";
 import {
   notifySuccess,
   notifyError,
-  notifyInfo,
 } from "../components/notification/ToastNotification.jsx";
-import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import FacebookIcon from "@mui/icons-material/Facebook";
 import AuthService from "../services/AuthService.jsx";
+import { pizzaTheme } from "./theme";
+import { useEffect, useState } from "react";
 
-// Giả lập các icon - trong dự án thực tế sẽ import từ thư viện icon
-const PersonIcon = () => (
-  <span role="img" aria-label="person">
-    👤
-  </span>
-);
-const LockIcon = () => (
-  <span role="img" aria-label="lock">
-    🔒
-  </span>
-);
-const VisibilityIcon = () => (
-  <span role="img" aria-label="show">
-    👁️
-  </span>
-);
-const VisibilityOffIcon = () => (
-  <span role="img" aria-label="hide">
-    🔍
-  </span>
-);
+// Hình ảnh Pizza Boy (sử dụng ảnh từ ảnh mẫu)
+const PIZZA_BOY_IMAGE_URL =
+  "https://png.pngtree.com/png-clipart/20250128/original/pngtree-3d-pizza-boy-running-with-freshly-baked-png-image_20068701.png";
+// Sử dụng URL bạn cung cấp: "https://png.pngtree.com/png-clipart/20230424/ourmid/pngtree-3d-pizza-boy-running-with-freshly-baked-png-image_20068701.png";
+// const PIZZA_BOY_IMAGE_URL = "https://png.pngtree.com/png-clipart/20230424/ourmid/pngtree-3d-pizza-boy-running-with-freshly-baked-png-image_20068701.png";
 
-const fadeIn = keyframes(`
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-`);
-
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  animation: `${fadeIn} 0.5s ease-in-out`,
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
-  borderRadius: "16px",
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-  background: "rgba(255, 255, 255, 0.95)",
-  backdropFilter: "blur(10px)",
-  border: "1px solid rgba(255, 255, 255, 0.18)",
-}));
-
-const LoginContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  position: "relative",
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: 0,
-    inset: 0,
-    backgroundImage:
-      'url("https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80")',
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    opacity: 0.4,
-  },
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  borderRadius: "8px",
-  padding: "12px",
-  fontWeight: 600,
-  textTransform: "none",
-  fontSize: "1rem",
-  background: "linear-gradient(90deg, #2988BC 0%, #2F496E 100%)",
-  "&:hover": {
-    background: "linear-gradient(90deg, #2F496E 0%, #2988BC 100%)",
-  },
-  transition: "all 0.3s ease",
-}));
-
-const Logo = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  marginBottom: theme.spacing(3),
-  "& svg": {
-    width: 40,
-    height: 40,
-    marginRight: theme.spacing(1),
-  },
-}));
+// Background Image URL (Use the same as Register for consistency)
+const BACKGROUND_IMAGE_URL =
+  "https://img.freepik.com/free-vector/abstract-orange-background-with-lines-halftone-effect_1017-32107.jpg?semt=ais_hybrid&w=740";
 
 const Login = () => {
-  const [userNameError, setUserNameError] = React.useState(false);
-  const [userNameErrorMess, setUserNameErrorMess] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [boxVisible, setBoxVisible] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  useEffect(() => {
+    setTimeout(() => setBoxVisible(true), 10);
+  }, []);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
+  // Keeping the existing handleSubmit logic
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateInputs()) {
+    const data = new FormData(event.currentTarget);
+    const username = data.get("username"); // API uses username (or email)
+    const password = data.get("password");
+
+    if (!username || !password) {
+      notifyError("Email/Username and Password are required.");
       return;
     }
-    const data = new FormData(event.currentTarget);
+
     try {
       setIsLoading(true);
-      const resData = await AuthService.login(data);
+      const resData = await AuthService.login(data); // AuthService.login nhận FormData
       if (resData.status === 200) {
         const decode = jwtDecode(resData.data);
+        localStorage.setItem("token", resData.data); // Lưu token
         localStorage.setItem("role", decode.role);
-        localStorage.setItem("username", data.get("username"));
+        localStorage.setItem("username", username); // Lưu username đã nhập
+        notifySuccess("Login successful!");
         const redirectUrl = localStorage.getItem("redirectUrl");
         if (redirectUrl) {
           localStorage.removeItem("redirectUrl");
@@ -182,354 +93,302 @@ const Login = () => {
           }
         }
       } else {
-        notifyError("Đăng nhập thất bại!");
+         notifyError(resData.data?.message || "Login failed! Please check your credentials.");
       }
     } catch (e) {
-      notifyError(e.message);
+      notifyError(e.response?.data?.message || e.message || "An error occurred during login.");
+      console.error("Login error:", e);
     } finally {
       setIsLoading(false);
     }
   };
-  const handleSuccess = (response) => {
-    console.log("Login Success:", response);
-    // Gửi response.credentials đến backend để xác thực
-  };
 
-  const handleFailure = (error) => {
-    console.error("Login Failed:", error);
-  };
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const validateInputs = () => {
-    const username = document.getElementById("username");
-    const password = document.getElementById("password");
-
-    let isValid = true;
-
-    if (!username.value) {
-      setUserNameError(true);
-      setUserNameErrorMess("Tên đăng nhập không được để trống!");
-      isValid = false;
-    } else {
-      setUserNameError(false);
-      setUserNameErrorMess("");
-    }
-
-    if (!password.value) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Mật khẩu không được để trống!");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return isValid;
-  };
-
-  const loginGoogle = async (credentialResponse) => {
-    try {
-      const decoded = jwtDecode(credentialResponse?.credential);
-      let dataReq = {
-        email: decoded.email,
-      };
-      const resData = await AuthService.loginGoogle(dataReq);
-      if (resData.status === 200) {
-        console.log(resData, "resData");
-        const decode = jwtDecode(resData?.data);
-        localStorage.setItem("role", decode.role);
-        const redirectUrl = localStorage.getItem("redirectUrl");
-        if (redirectUrl) {
-          localStorage.removeItem("redirectUrl");
-          navigate(redirectUrl);
-        } else {
-          if (decode.role === "SUPER_ADMIN") {
-            navigate("/admin/homeAdmin");
-            notifySuccess("Đăng nhập thành công!");
-          } else if (decode.role === "GUEST_ROLE_MEMBER") {
-            navigate("/");
-            notifySuccess("Đăng nhập thành công!");
-          } if (decode.role === "STORE_MANAGER") {
-            navigate("/store/homeStore");
-            notifySuccess("Đăng nhập thành công!");
-          }
-          else {
-            navigate("/403");
-            notifyError("Bạn không có quyền truy cập!");
-          }
-        }
-      } else {
-        notifyError("Đăng nhập thất bại!");
-      }
-    } catch (e) {
-      notifyError(e.message);
-    }
-  };
-
-  const onSuccess = (response) => {
-    console.log(response);
-  };
-
-  const onFailure = (error) => {
-    console.log(error);
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      height: "55px",
+      borderRadius: "10px",
+      backgroundColor: "white",
+      marginBottom: "10px",
+      "& input": {
+        padding: "16px 22px",
+        fontSize: "16px",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: pizzaTheme.palette.secondary.main,
+      },
+    },
+    "& .MuiFormHelperText-root": {
+      marginLeft: 2,
+      fontSize: "0.7rem",
+    },
   };
 
   return (
-    <>
-      <CssBaseline enableColorScheme />
-      <LoginContainer
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
+    <ThemeProvider theme={pizzaTheme}>
+      <CssBaseline />
+      {isLoading && <Loading />} {/* Loading component */}
+      <Box
+        sx={{
+          minHeight: "100vh",
+          position: "relative",
+          overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 2,
+        }}
       >
-        {isLoading && <Loading />}
-        <Card variant="outlined">
-          <Logo>
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M19 8H5V19H19V8Z"
-                stroke="#2988BC"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M16 3L12 8L8 3"
-                stroke="#2988BC"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 13H15"
-                stroke="#2988BC"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <path
-                d="M9 16H15"
-                stroke="#2988BC"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                color: "#2988BC",
-                fontSize: "clamp(1.5rem, 10vw, 1.8rem)",
+        {/* Background image + blur overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 0,
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              backdropFilter: "blur(6px)",
+              background: "rgba(255,255,255,0.15)",
+              zIndex: 1,
+            },
+          }}
+        />
+        {/* Nội dung chính */}
+        <Grid
+          container
+          sx={{
+            position: "relative",
+            zIndex: 2,
+            bgcolor: "background.paper",
+            borderRadius: "20px",
+            boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+            maxWidth: "900px",
+            width: "100%",
+            minHeight: { xs: "auto", md: "500px" },
+            transform: boxVisible ? "translateY(0)" : "translateY(60px)",
+            opacity: boxVisible ? 1 : 0.7,
+            transition:
+              "transform 0.5s cubic-bezier(.4,1.3,.6,1), opacity 0.5s cubic-bezier(.4,1.3,.6,1)",
+          }}
+        >
+          {/* Left Side - Image */}
+          <Grid
+            item
+            xs={12}
+            sm={5}
+            sx={{
+              bgcolor: "background.default",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: { xs: 2, sm: 3 },
+            }}
+          >
+            <img
+              src={PIZZA_BOY_IMAGE_URL}
+              alt="Minh họa"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                height: "auto",
               }}
-            >
-              LuxStay
-            </Typography>
-          </Logo>
-
-          <Typography
-            component="h2"
-            variant="h5"
+            />
+          </Grid>
+          {/* Right Side - Form */}
+          <Grid
+            item
+            xs={12}
+            sm={7}
             sx={{
-              width: "100%",
-              fontSize: "clamp(1.5rem, 8vw, 1.8rem)",
-              textAlign: "center",
-              fontWeight: 600,
-              marginBottom: 2,
-              color: "#333",
-            }}
-          >
-            Đăng nhập
-          </Typography>
-
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{
-              textAlign: "center",
-              marginBottom: 3,
-              fontSize: "0.9rem",
-            }}
-          >
-            Đăng nhập để tận hưởng những trải nghiệm đặt phòng tốt nhất
-          </Typography>
-
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
+              bgcolor: "primary.main",
               display: "flex",
               flexDirection: "column",
-              width: "100%",
-              gap: 2.5,
+              alignItems: "center",
+              justifyContent: "center",
+              padding: { xs: 1, sm: 2, md: 2.5 },
             }}
           >
-            <FormControl>
-              <TextField
-                error={userNameError}
-                helperText={userNameErrorMess}
-                label="Tên đăng nhập"
-                id="username"
-                type="text"
-                name="username"
-                placeholder="Nhập tên đăng nhập của bạn"
-                autoComplete="username"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={userNameError ? "error" : "primary"}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <PersonIcon />
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: "8px" },
-                }}
-              />
-            </FormControl>
-
-            <FormControl>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                label="Mật khẩu"
-                name="password"
-                placeholder="••••••"
-                type={showPassword ? "text" : "password"}
-                id="password"
-                autoComplete="current-password"
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? "error" : "primary"}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockIcon />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        edge="end"
-                      >
-                        {showPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: "8px" },
-                }}
-              />
-            </FormControl>
-
             <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
+                flexDirection: "column",
                 alignItems: "center",
+                width: "100%",
+                maxWidth: "340px",
+                gap: 0.5,
               }}
             >
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label={
-                  <Typography variant="body2">Ghi nhớ đăng nhập</Typography>
-                }
-              />
-              <Link
-                component="button"
-                type="button"
-                onClick={handleClickOpen}
-                variant="body2"
-                sx={{ color: "#2988BC", fontWeight: 500 }}
+              {/* Lock Icon Avatar */}
+              <Avatar sx={{ bgcolor: "background.paper", m: 0.5 }}>
+                <LockOutlinedIcon color="primary" fontSize="large" />
+              </Avatar>
+              {/* Title */}
+              <Typography
+                component="h1"
+                variant="h5"
+                sx={{ color: "text.primary", fontWeight: 700, mb: 0.5 }}
               >
-                Quên mật khẩu?
-              </Link>
-            </Box>
-
-            <StyledButton
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
-              Đăng nhập
-            </StyledButton>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="center"
-              sx={{ mt: 1 }}
-            >
-              Chưa có tài khoản?{" "}
-              <Link
-                href="/register"
-                variant="body2"
-                sx={{ color: "#2988BC", fontWeight: 600 }}
-              >
-                Đăng ký ngay
-              </Link>
-            </Typography>
-
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-              <Box sx={{ flex: 1, height: "1px", bgcolor: "divider" }} />
-              <Typography variant="body2" color="text.secondary" sx={{ mx: 2 }}>
-                hoặc
+                Đăng nhập
               </Typography>
-              <Box sx={{ flex: 1, height: "1px", bgcolor: "divider" }} />
-            </Box>
-
-            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-              <GoogleLogin
-                onSuccess={(credentialResponse) =>
-                  loginGoogle(credentialResponse)
-                }
-                onError={() => {
-                  console.log("Login Failed");
-                }}
-                useOneTap
-              />
-              <Button
-                variant="outlined"
-                startIcon={<FacebookIcon />}
+              {/* Form Fields */}
+              <FormControl fullWidth margin="none" size="small">
+                <TextField
+                  id="username"
+                  name="username"
+                  placeholder="Tên đăng nhập *"
+                  autoComplete="username"
+                  autoFocus
+                  size="small"
+                  sx={textFieldStyles}
+                  InputProps={{
+                    style: {
+                      height: 55,
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: 16,
+                      padding: "0 10px",
+                    },
+                  }}
+                  inputProps={{
+                    style: {
+                      padding: 0,
+                      textAlign: "left",
+                    },
+                  }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="none" size="small">
+                <TextField
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mật khẩu *"
+                  autoComplete="current-password"
+                  size="small"
+                  sx={textFieldStyles}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                          size="small"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    style: {
+                      height: 55,
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: 16,
+                      padding: "0 10px",
+                    },
+                  }}
+                  inputProps={{
+                    style: {
+                      padding: 0,
+                      textAlign: "left",
+                    },
+                  }}
+                />
+              </FormControl>
+              {/* Remember me & Forgot Password */}
+              <Box
                 sx={{
-                  backgroundColor: "#1877F2",
-                  marginLeft: 2,
-                  color: "white",
-                  textTransform: "none",
-                  fontSize: "13px",
-                  height: 40,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                  mt: 0.5,
+                  mb: 1,
                 }}
               >
-                Login with Facebook
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      value="remember"
+                      color="default"
+                      size="small"
+                      sx={{ padding: "6px" }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary", fontSize: "0.8rem" }}
+                    >
+                      Ghi nhớ đăng nhập
+                    </Typography>
+                  }
+                />
+                {/* <MuiLink
+                  href="#"
+                  variant="body2"
+                  sx={{
+                    color: "#FEBDAB",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  Quên mật khẩu?
+                </MuiLink> */}
+              </Box>
+              {/* Sign In Button */}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="secondary"
+                disabled={isLoading}
+                sx={{ mt: 1, paddingY: 1 }}
+              >
+                {isLoading ? "Đang đăng nhập..." : "ĐĂNG NHẬP"}
               </Button>
+              {/* Sign Up Link */}
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  alignSelf: "center",
+                  mt: 1,
+                  fontSize: "0.8rem",
+                }}
+              >
+                Chưa có tài khoản?{" "}
+                <MuiLink
+                  href="/register"
+                  variant="body2"
+                  sx={{
+                    color: "#FEBDAB",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  Đăng ký
+                </MuiLink>
+              </Typography>
             </Box>
-          </Box>
-        </Card>
-
-        <Typography
-          variant="body2"
-          color="white"
-          align="center"
-          sx={{ mt: 4, opacity: 0.8, zIndex: 1 }}
-        >
-          2025 LuxStay. Tất cả các quyền được bảo lưu.
-        </Typography>
-      </LoginContainer>
-    </>
+          </Grid>
+        </Grid>
+      </Box>
+    </ThemeProvider>
   );
 };
 

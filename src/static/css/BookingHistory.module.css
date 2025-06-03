@@ -248,17 +248,23 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive styles */
+.hotelInfo :global(.ant-typography) {
+  display: block;
+}
+
+.amount :global(.ant-typography) {
+  display: inline;
+}
+
+.viewButton :global(.anticon) {
+  margin-right: 4px;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .layout {
     padding: 20px 0;
@@ -276,32 +282,31 @@
 
   .hotelDetailHeader {
     flex-direction: column;
+    gap: 16px;
   }
 
   .hotelDetailImage {
     width: 100%;
-    max-width: none;
+    height: auto;
   }
 }
 
-/* Print styles */
 @media print {
   .layout {
     background-color: white;
-    background-image: none;
     padding: 0;
   }
 
   .card,
-  .detailCard {
+  .detailCard,
+  .totalAmount {
     box-shadow: none;
-    border: 1px solid #f0f0f0;
-    page-break-inside: avoid;
+    border: 1px solid #eee;
   }
 
   .viewButton,
-  .tabExtra,
+  .searchInput,
   .tabs {
-    display: none !important;
+    display: none;
   }
 }

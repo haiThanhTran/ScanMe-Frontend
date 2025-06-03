@@ -1,0 +1,191 @@
+/* src/components/voucherComponent/VoucherCard.module.css */
+.voucherCardOuter {
+    position: relative;
+    margin-bottom: 1px;
+  }
+  
+  .voucherCard {
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09) !important;
+    overflow: visible !important;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 230px; /* Tăng chiều cao tối thiểu chút */
+  }
+  
+  .voucherCard.expired {
+    opacity: 0.65; /* Tăng độ mờ hơn chút */
+    background-color: #f5f5f5; /* Nền xám hơn */
+  }
+  .voucherCard.expired .saveButton {
+    background-color: #bfbfbf !important; /* Xám đậm hơn cho nút */
+    border-color: #bfbfbf !important;
+    cursor: not-allowed;
+    color: rgba(0,0,0,0.25) !important;
+  }
+  .voucherCard.saved .saveButton { /* Khi đã lưu và chưa dùng */
+    background-color: #b7eb8f !important; /* Xanh lá nhạt */
+    border-color: #b7eb8f !important;
+    color: #389e0d !important; /* Xanh lá đậm */
+  }
+  .voucherCard.fullyUsed { /* Khi đã hết lượt lưu nhưng chưa hết hạn */
+    opacity: 0.8;
+  }
+  .voucherCard.fullyUsed .saveButton {
+    background-color: #ffe58f !important; /* Vàng nhạt */
+    border-color: #ffe58f !important;
+    color: #d48806 !important; /* Vàng đậm */
+    cursor: not-allowed;
+  }
+  
+  
+  .voucherCardContent {
+    padding: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .voucherCardHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Giảm margin */
+  }
+  
+  .storeLogo {
+    margin-right: 10px;
+    border: 1px solid #f0f0f0;
+    flex-shrink: 0; /* Không cho logo bị co lại */
+  }
+  
+  .headerText {
+      display: flex;
+      flex-direction: column; /* Cho code và tag nằm trên 2 dòng nếu cần */
+      gap: 2px; /* Khoảng cách nhỏ */
+      overflow: hidden; /* Để ellipsis hoạt động */
+  }
+  
+  .voucherCode {
+    font-size: 1.05em; /* To hơn chút */
+    color: #262626; /* Đậm hơn */
+    line-height: 1.3;
+  }
+  
+  .discountTag {
+    font-size: 0.75em !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    padding: 2px 6px !important; /* Padding nhỏ hơn */
+    line-height: 1.2;
+  }
+  .discountTag .anticon {
+    font-size: 0.9em; /* Icon nhỏ hơn */
+    margin-right: 3px;
+  }
+  
+  .voucherDescription {
+    font-size: 0.85em; /* Nhỏ hơn chút */
+    color: #595959; /* Màu xám đậm */
+    margin-bottom: 8px !important; /* Giảm margin */
+    line-height: 1.4;
+    flex-grow: 1;
+  }
+  
+  .voucherInfo {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 0;
+  }
+  .infoText {
+      display: block;
+      margin-bottom: 3px;
+      display: flex; /* Để icon và text thẳng hàng */
+      align-items: center;
+  }
+  .infoText:last-child {
+      margin-bottom: 0;
+  }
+  .infoText .anticon {
+      margin-right: 5px;
+  }
+  
+  /* --- Phần hiển thị số lượng và thanh progress --- */
+  .usageDetails {
+      padding: 8px 16px 10px 16px; /* Padding cho khu vực này */
+      /* border-top: 1px dashed #f0f0f0; */ /* Bỏ border top nếu footer đã có */
+      margin-top: auto; /* Đẩy xuống dưới cùng của .voucherCardContent */
+  }
+  
+  .usageProgressBar {
+      margin-bottom: 4px !important;
+  }
+  
+  .usageProgressBar :global(.ant-progress-inner) {
+      background-color: #e0e0e0; /* Màu nền của thanh progress */
+  }
+  .usageProgressBar :global(.ant-progress-bg) {
+      height: 8px !important; /* Độ dày thanh progress */
+  }
+  
+  .usageText {
+    font-size: 0.8em; /* Kích thước chữ */
+    color: #595959; /* Màu chữ */
+    text-align: center; /* Căn giữa text */
+    display: block; /* Cho text chiếm full width */
+  }
+  
+  
+  .voucherCardFooter {
+    padding: 10px 16px; /* Giảm padding footer */
+    border-top: 1px solid #f0f0f0; /* Đường kẻ rõ hơn */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Căn giữa nút */
+    min-height: 48px;
+  }
+  
+  .expiredTextFull {
+      font-size: 0.9em;
+      font-weight: 500;
+  }
+  
+  .saveButton {
+    background: #ff7043 !important;
+    border-color: #ff7043 !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    min-width: 120px; /* Tăng chiều rộng nút */
+    /* box-shadow: 0 2px 0 rgba(0,0,0,0.043); */ /* Bỏ shadow nếu không cần */
+  }
+  .saveButton:hover {
+    background: #f4511e !important;
+    border-color: #f4511e !important;
+  }
+  .saveButton[disabled] { /* Style chung cho nút disabled */
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+  }
+  /* Nút "Đã Lưu" */
+  .saveButton[type="default"] {
+      background: #e6f4ff !important; /* Xanh dương nhạt */
+      border-color: #91caff !important;
+      color: #1677ff !important; /* Xanh dương đậm */
+  }
+  
+  .saveButton .anticon {
+      margin-right: 6px;
+  }
+  
+  .voucherNotch {
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 40px;
+    background: #f7f7f7; /* Màu nền của trang VouchersPage */
+    border-radius: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+  }
+  .voucherNotch.left { left: -10px; }
+  .voucherNotch.right { right: -10px; }

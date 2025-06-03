@@ -41,6 +41,7 @@ function Header() {
         localStorage.removeItem('role');
         localStorage.removeItem('token');
         localStorage.removeItem('username');
+        localStorage.removeItem('redirectUrl');
         setIsLoggedIn(false);
         setUser(null);
         navigate('/');

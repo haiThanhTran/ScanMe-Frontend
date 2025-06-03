@@ -17,6 +17,13 @@ const SystemService = {
           throw new Error(e);
       }
   },
+  async getLogRequest(){
+    try{
+        return await fetchUtils.get("/system/logRequest/get");
+    }catch (e) {
+        throw new Error(e);
+    }
+}
 }
 
 export default SystemService;

@@ -16,20 +16,26 @@ import DashboardStore from "./page/storeScreenn/DashboardStore.jsx";
 import ProductsPage from "./page/ProductPages/ProductsPage.jsx";
 import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
 import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
+import ScrollToTop from "./utils/ScrollToTop.jsx"; // <<<<<< IMPORT COMPONENT MỚI
+import FAQPage from "./components/homePage/faqPage.jsx"; // Import FAQPage
 
 function App() {
   return (
     <>
       <ToastNotification />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />}>
             <Route index element={<MainContent />} />
-            <Route path="information/*" element={<LayoutUser />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="vouchers" element={<VouchersPage />} />
+            {/* <Route path="orders" element={<OrderHistoryPage />} /> */}
+            <Route path="information/*" element={<LayoutUser />} />
+            <Route path="faq" element={<FAQPage />} /> {/* Added FAQ route */}
           </Route>
+            
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/404" element={<NotFoundPage />} />
@@ -43,7 +49,6 @@ function App() {
                 </RoleBaseRoute>
               }
             />
-            <Route path="/profile" element={<Profile />} />
           </Route>
           <Route element={<PrivateRoute />}>
             <Route

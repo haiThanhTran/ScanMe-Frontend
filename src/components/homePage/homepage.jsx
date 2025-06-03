@@ -1,19 +1,34 @@
-import "../../static/css/styles.css";
-// import "bootstrap/dist/css/bootstrap.min.css";
+// src/components/homePage/HomePage.jsx
+import React from "react";
 import Header from "./header";
-import Footer from "./footer";
-
-import { Outlet } from "react-router-dom";
-// import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import Footer from "./footer"; // Bạn muốn Footer hiển thị ở tất cả các trang trong HomePage này
+import { Outlet, useLocation } from "react-router-dom"; // Thêm useLocation
+import styles from "./HomePage.module.css";
+import { ChatWidget } from "./chatWidget";
+const HEADER_HEIGHT = 70;
 
 function HomePage() {
+  const location = useLocation();
+  // Quyết định có hiển thị Footer hay không dựa trên path
+  // Ví dụ: Không hiển thị footer cho các trang trong /information/*
+  const shouldShowFooter = !location.pathname.startsWith("/information");
+
   return (
-    <div className="">
+    <div className={styles.homePageWrapper}>
       <Header />
-      <Outlet />
-      <Footer />
+      <main
+        className={styles.outletContent}
+        style={{
+          paddingTop: `${HEADER_HEIGHT}px`,
+          // Thêm padding-bottom nếu bạn muốn có khoảng trống cố định trước Footer
+          // paddingBottom: shouldShowFooter ? '50px' : '0', // Ví dụ
+        }}
+      >
+        <Outlet /> {/* LayoutUser sẽ được render ở đây */}
+      </main>
+       <Footer />
+       <ChatWidget />
     </div>
   );
 }
-
 export default HomePage;

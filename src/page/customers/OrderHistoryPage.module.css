@@ -1,0 +1,127 @@
+/* src/static/css/OrderHistoryPage.module.css */
+.orderHistoryLayout {
+    background: #f0f2f5;
+  }
+  
+  .orderHistoryContent {
+    margin: 20px; /* Giảm margin một chút */
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Giảm box-shadow */
+  }
+  
+  .pageTitle {
+    margin-bottom: 20px !important;
+    color: #1f1f1f; /* Màu đậm hơn cho tiêu đề */
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem; /* Tăng kích thước tiêu đề trang */
+  }
+  .pageTitle svg {
+    margin-right: 12px;
+    font-size: 1.3em;
+    color: #1890ff;
+  }
+  
+  .cardContainer {
+    border-radius: 8px;
+    padding: 16px; /* Thêm padding cho card */
+  }
+  
+  .orderTabs {
+    margin-bottom: 0 !important;
+  }
+  .orderTabs :global(.ant-tabs-nav) {
+    margin-bottom: 0px !important;
+  }
+  .orderTabs :global(.ant-tabs-tab) {
+    padding: 10px 16px; /* Tăng padding cho tab */
+    font-size: 0.9rem;
+    margin: 0 4px 0 0 !important; /* Điều chỉnh margin giữa các tab */
+  }
+  .orderTabs :global(.ant-tabs-tab-active .ant-tabs-tab-btn){
+    color: #1890ff;
+    font-weight: 500;
+  }
+  
+  
+  .ordersTable :global(th) {
+    background-color: #fafafa !important;
+    font-weight: 600 !important; /* Đậm hơn cho header table */
+    color: #333;
+    padding: 12px 8px !important; /* Điều chỉnh padding header table */
+  }
+  
+  .ordersTable :global(.ant-table-tbody > tr > td) {
+    vertical-align: middle; /* Căn giữa nội dung cell */
+    padding: 12px 8px !important; /* Điều chỉnh padding cell */
+  }
+  .ordersTable :global(.ant-table-tbody > tr:hover > td) {
+    background: #f9f9f9 !important;
+  }
+  
+  .amountCell {
+    font-weight: 600; /* Đậm hơn cho giá tiền */
+    color: #cf1322; /* Màu đỏ đậm hơn */
+    font-size: 0.95em;
+  }
+  
+  /* --- CSS cho Modal chi tiết --- */
+  .detailModal :global(.ant-modal-header) {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  .detailModal :global(.ant-modal-title .ant-typography) {
+    color: #333;
+  }
+  .detailModal :global(.ant-modal-title svg) {
+    color: #1890ff;
+  }
+  
+  .detailModal :global(.ant-modal-body) {
+    padding: 0; /* Bỏ padding mặc định của body để wrapper tự quản lý */
+  }
+  
+  /* Wrapper cho nội dung có thể cuộn của modal */
+  .modalBodyContent {
+    max-height: 70vh; /* Chiều cao tối đa */
+    overflow-y: auto;  /* Bật thanh cuộn dọc khi nội dung dài */
+    padding: 24px;     /* Padding cho nội dung bên trong */
+  }
+  
+  
+  .detailModal :global(.ant-descriptions-item-label) {
+    font-weight: 500;
+    color: #555;
+    background-color: #fafafa; /* Nền nhẹ cho label */
+    width: 170px; /* Điều chỉnh độ rộng label nếu cần */
+  }
+  .detailModal :global(.ant-descriptions-item-content) {
+    word-break: break-word;
+  }
+  
+  .modalProductList :global(.ant-list-item) {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .modalProductList :global(.ant-list-item:last-child) {
+    border-bottom: none;
+  }
+  
+  .modalProductList :global(.ant-list-item-meta-title) {
+    margin-bottom: 2px !important;
+    font-size: 1em; /* Rõ ràng hơn */
+  }
+  .modalProductList :global(.ant-list-item-meta-description) {
+    font-size: 0.85em;
+    color: #777;
+  }
+  
+  .appliedVoucherText {
+    font-size: 0.9em;
+    margin-bottom: 4px !important;
+  }
+  .appliedVoucherText .ant-tag {
+    margin-right: 6px;
+  }
