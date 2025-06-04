@@ -142,7 +142,7 @@ const ProductsPage = () => {
     );
   }
 
-  const bannerImages = [banner1, banner2, banner3,banner4];
+  const bannerImages = [banner1, banner2, banner3, banner4];
 
   const settings = {
     dots: true,
@@ -225,12 +225,26 @@ const ProductsPage = () => {
               <Input.Search
                 placeholder="Tìm kiếm sản phẩm..."
                 allowClear
-                enterButton
+                enterButton={
+                  <button
+                    style={{
+                      backgroundColor: "#C31E29",
+                      color: "white",
+                      border: "none",
+                      padding: "0 16px",
+                      borderRadius: "4px",
+                      height: "32px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Tìm
+                  </button>
+                }
                 onSearch={handleSearch}
                 style={{ width: 300 }}
                 defaultValue={filters.search}
-                className="ecommerce-search-input"
               />
+
               <Select
                 defaultValue={filters.sort}
                 style={{ width: 180 }}

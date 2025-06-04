@@ -23,11 +23,11 @@ const Section = styled.section`
       position: absolute;
       inset: 0;
       z-index: 1;
-      background-image: url('https://www.betterup.com/hubfs/Happy-businesswoman-working-at-her-office-how-to-be-content-with-life.jpg');
+      background-image: url('https://scontent-lax3-1.xx.fbcdn.net/v/t1.15752-9/491186471_1252332379617310_2036589493500614325_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeF--7jA8HxfvNGtRpdZTfQ0Fvatbco9K1YW9q1tyj0rVuJL-gpXRGUAne3B1H5fEtRfrf46gnDQ6SRPSE-HhUAZ&_nc_ohc=D2x9Fkp1Ti0Q7kNvwHvfXmY&_nc_oc=Adm_xUBlPtr-W0hz5giFzy6St7xb8Sc5DXUaagAZ_dGzbxZAfWMHsdmbr3-sOBLExCs&_nc_zt=23&_nc_ht=scontent-lax3-1.xx&oh=03_Q7cD2gGo0Fdmp5hQkmDO9MsdYOQe9yTmqc5Mdh2zeQrUcnV-sA&oe=6867B7AE');
       background-size: cover;
       background-position: center;
-      filter: blur(4px) brightness(0.5);
-      opacity: 0.85;
+      filter: blur(1px) brightness(0.7);
+      opacity: 0.95;
     }
   `}
   ${(props) =>
@@ -160,41 +160,90 @@ const VouchersPage = () => {
       <Section
         hero
         style={{
-          textAlign: "center",
           padding: "5.5rem 1rem 4rem 1rem",
           position: "relative",
+          minHeight: "400px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
         }}
       >
-        <InnerContainer style={{ position: "relative", zIndex: 2 }}>
-          <CTAText
-            style={{ color: "white", textShadow: "0 2px 8px rgba(0,0,0,0.25)" }}
-          >
-            Thu Thập Hàng Trăm Voucher
-          </CTAText>
-          <CTAParagraph
-            style={{
-              color: "#f3f3f3",
-              textShadow: "0 2px 8px rgba(0,0,0,0.18)",
-            }}
-          >
-            Nền Tảng Tặng Bạn Voucher Miễn Phí
-          </CTAParagraph>
+        {/* Overlay gradient đen mờ */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 2,
+            background:
+              "linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 80%)",
+            pointerEvents: "none",
+          }}
+        />
+        <InnerContainer
+          style={{
+            position: "relative",
+            zIndex: 3,
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            maxWidth: "1280px",
+            margin: "0 auto",
+            height: "100%",
+          }}
+        >
           <div
-            style={{ display: "flex", justifyContent: "center", gap: "1rem" }}
-          >
-            <Button primary onClick={() => navigate("/vouchers")}>
-              Khám Phá Ngay
-            </Button>
-          </div>
-          <CTANote
             style={{
-              marginTop: "1.5rem",
-              color: "#f3f3f3",
-              textShadow: "0 2px 8px rgba(0,0,0,0.18)",
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              maxWidth: 600,
+              textAlign: "left",
+              gap: "1.2rem",
             }}
           >
-            Miễn phí sử dụng • Không phí ẩn • Hỗ trợ 24/7
-          </CTANote>
+            <CTAText
+              style={{
+                color: "white",
+                textShadow: "0 2px 8px rgba(0,0,0,0.25)",
+                textAlign: "left",
+                marginBottom: 0,
+                lineHeight: 1.1,
+              }}
+            >
+              Thu Thập Hàng Trăm Voucher
+            </CTAText>
+            <CTAParagraph
+              style={{
+                color: "#f3f3f3",
+                textShadow: "0 2px 8px rgba(0,0,0,0.18)",
+                textAlign: "left",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Nền Tảng Tặng Bạn Voucher Miễn Phí
+            </CTAParagraph>
+            <div
+              style={{ display: "flex", gap: "1rem", margin: "1.2rem 0 0 0" }}
+            >
+              <Button primary onClick={() => navigate("/vouchers")}>
+                Khám Phá Ngay
+              </Button>
+            </div>
+            <CTANote
+              style={{
+                marginTop: "1.2rem",
+                color: "#f3f3f3",
+                textShadow: "0 2px 8px rgba(0,0,0,0.18)",
+                textAlign: "left",
+                marginLeft: 0,
+              }}
+            >
+              Miễn phí sử dụng • Không phí ẩn • Hỗ trợ 24/7
+            </CTANote>
+          </div>
         </InnerContainer>
       </Section>
       <div

@@ -1,4 +1,5 @@
 const API_URL = 'https://scanme-backend.onrender.com/api';
+// const API_URL = 'http://localhost:9999/api';
 
 const headers = {
     'Content-Type': 'application/json',
