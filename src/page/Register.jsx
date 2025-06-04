@@ -116,8 +116,8 @@ const Register = () => {
           confirmPassword: values.confirmPassword,
         };
         // Giả sử API đăng ký không trả về token ngay mà chỉ thông báo thành công
-        const response = await fetchUtils.post(
-          "/register/account", // Đảm bảo API endpoint đúng
+        const response = await axios.post(
+          "https://scanme-backend.onrender.com/api/register/account", // Đảm bảo API endpoint đúng
           apiPayload
         );
 
