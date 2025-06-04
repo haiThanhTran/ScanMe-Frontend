@@ -30,7 +30,7 @@ import { pizzaTheme } from "./theme";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useEffect, useState } from "react";
-
+import fetchUtils from "../utils/fetchUtils.jsx";
 const PIZZA_BOY_IMAGE_URL =
   "https://png.pngtree.com/png-clipart/20250128/original/pngtree-3d-pizza-boy-running-with-freshly-baked-png-image_20068701.png";
 const BACKGROUND_IMAGE_URL =
@@ -116,8 +116,8 @@ const Register = () => {
           confirmPassword: values.confirmPassword,
         };
         // Giả sử API đăng ký không trả về token ngay mà chỉ thông báo thành công
-        const response = await axios.post(
-          "http://localhost:9999/api/register/account", // Đảm bảo API endpoint đúng
+        const response = await fetchUtils.post(
+          "/register/account", // Đảm bảo API endpoint đúng
           apiPayload
         );
 
