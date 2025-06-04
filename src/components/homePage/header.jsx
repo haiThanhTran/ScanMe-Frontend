@@ -149,8 +149,8 @@ function Header() {
 
   const mainMenuItems = [
     { label: "Trang Chủ", path: "/" },
-    { label: "Mua Sản Phẩm", path: "/products" },
     { label: "Kho Voucher", path: "/vouchers" },
+    { label: "Mua Sản Phẩm", path: "/products" },
     { label: "Trung tâm hỗ trợ", path: "/faq" },
   ];
 
@@ -260,11 +260,11 @@ function Header() {
                   />
                 }
                 onClick={() => navigate("/information/cart")}
-                onMouseOver={e => {
+                onMouseOver={(e) => {
                   e.currentTarget.style.background = "#f5c6cb";
                   e.currentTarget.style.color = "#c31e29";
                 }}
-                onMouseOut={e => {
+                onMouseOut={(e) => {
                   e.currentTarget.style.background = "#eaeaea";
                   e.currentTarget.style.color = "#e61e43";
                 }}
