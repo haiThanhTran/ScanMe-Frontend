@@ -25,6 +25,8 @@
   }
   
   .cardContainer {
+    overflow-x: auto; /* Cho phép cuộn nếu thực sự cần */
+    min-width: 0;     /* Ngăn chặn con vượt cha */
     border-radius: 8px;
     padding: 16px;
   }
@@ -40,6 +42,11 @@
   .voucherTabs :global(.ant-tabs-tab-active .ant-tabs-tab-btn){
     color: #1890ff;
     font-weight: 500;
+  }
+  
+  .vouchersTable {
+    min-width: 100%;
+    width: 100%;
   }
   
   .vouchersTable :global(th) {

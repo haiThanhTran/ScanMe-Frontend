@@ -245,3 +245,15 @@
   background: #c31e29 !important;
   color: #fff !important;
 }
+
+.cartAvatar {
+  background: #eaeaea !important;
+  color: #e61e43 !important;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+.cartAvatar:hover {
+  background: #f5c6cb !important;
+  color: #c31e29 !important;
+}

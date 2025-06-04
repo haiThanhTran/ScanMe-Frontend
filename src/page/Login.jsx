@@ -152,7 +152,7 @@ const handleSubmit = async (event) => {
           sx={{
             position: "absolute",
             inset: 0,
-            backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
+            backgroundColor: "#C31E29",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",

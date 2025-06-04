@@ -190,7 +190,14 @@ function Header() {
         }}
       >
         {/* Left: Logo */}
-        <div style={{ display: "flex",padding: "10px", alignItems: "center", height: "auto" }}>
+        <div
+          style={{
+            display: "flex",
+            padding: "10px",
+            alignItems: "center",
+            height: "auto",
+          }}
+        >
           <img
             onClick={() => navigate("/")}
             src={logo}
@@ -198,13 +205,12 @@ function Header() {
             style={{
               height: "80px",
               width: "auto",
-              
+
               objectFit: "contain",
               marginRight: "4px",
               cursor: "pointer",
             }}
           />
-          
         </div>
 
         {/* Center: Menu */}
@@ -234,69 +240,99 @@ function Header() {
           }}
         >
           {isLoggedIn ? (
-            <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item
-  key="username"
-  disabled
-  style={{ fontWeight: 600, cursor: "default" }}
->
-  {user?.username || "Tài khoản"}
-</Menu.Item>
-
-                  <Menu.Divider />
-                  {/* <Menu.Item
-                    key="profile"
-                    icon={<UserOutlined />}
-                    onClick={() => navigate("/information/profile")}
-                  >
-                    Chỉnh Sửa Hồ Sơ
-                  </Menu.Item> */}
-                  <Menu.Item
-                    key="cart"
-                    icon={<ShoppingCartOutlined />}
-                    onClick={() => navigate("/information/cart")}
-                  >
-                    Giỏ Hàng Của Bạn
-                  </Menu.Item>
-                  <Menu.Item
-                    key="orders"
-                    icon={<HistoryOutlined />}
-                    onClick={() => navigate("/information/order-history")}
-                  >
-                    Đơn Hàng Của Bạn
-                  </Menu.Item>
-                  <Menu.Item
-                    key="vouchers"
-                    icon={<WalletOutlined />}
-                    onClick={() => navigate("/information/my-vouchers")}
-                  >
-                    Voucher Của Bạn
-                  </Menu.Item>
-                  <Menu.Divider />
-                  <Menu.Item
-                    key="logout"
-                    icon={<LogoutOutlined />}
-                    danger
-                    onClick={handleLogout}
-                  >
-                    Đăng Xuất
-                  </Menu.Item>
-                </Menu>
-              }
-              placement="bottomRight"
-              trigger={["hover", "click"]}
-            >
+            <>
               <Avatar
-                icon={<UserOutlined />}
                 style={{
-                  cursor: "pointer",
                   background: "#eaeaea",
                   color: "#e61e43",
+                  marginRight: 12,
+                  cursor: "pointer",
+                  verticalAlign: "middle",
+                  transition: "color 0.2s, background 0.2s",
+                }}
+                size={36}
+                icon={
+                  <ShoppingCartOutlined
+                    style={{
+                      fontSize: 22,
+                      verticalAlign: "middle",
+                    }}
+                  />
+                }
+                onClick={() => navigate("/information/cart")}
+                onMouseOver={e => {
+                  e.currentTarget.style.background = "#f5c6cb";
+                  e.currentTarget.style.color = "#c31e29";
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.background = "#eaeaea";
+                  e.currentTarget.style.color = "#e61e43";
                 }}
               />
-            </Dropdown>
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      key="username"
+                      disabled
+                      style={{ fontWeight: 600, cursor: "default" }}
+                    >
+                      {user?.username || "Tài khoản"}
+                    </Menu.Item>
+
+                    <Menu.Divider />
+                    {/* <Menu.Item
+                      key="profile"
+                      icon={<UserOutlined />}
+                      onClick={() => navigate("/information/profile")}
+                    >
+                      Chỉnh Sửa Hồ Sơ
+                    </Menu.Item> */}
+                    <Menu.Item
+                      key="cart"
+                      icon={<ShoppingCartOutlined />}
+                      onClick={() => navigate("/information/cart")}
+                    >
+                      Giỏ Hàng Của Bạn
+                    </Menu.Item>
+                    <Menu.Item
+                      key="orders"
+                      icon={<HistoryOutlined />}
+                      onClick={() => navigate("/information/order-history")}
+                    >
+                      Đơn Hàng Của Bạn
+                    </Menu.Item>
+                    <Menu.Item
+                      key="vouchers"
+                      icon={<WalletOutlined />}
+                      onClick={() => navigate("/information/my-vouchers")}
+                    >
+                      Voucher Của Bạn
+                    </Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item
+                      key="logout"
+                      icon={<LogoutOutlined />}
+                      danger
+                      onClick={handleLogout}
+                    >
+                      Đăng Xuất
+                    </Menu.Item>
+                  </Menu>
+                }
+                placement="bottomRight"
+                trigger={["hover", "click"]}
+              >
+                <Avatar
+                  icon={<UserOutlined />}
+                  style={{
+                    cursor: "pointer",
+                    background: "#eaeaea",
+                    color: "#e61e43",
+                  }}
+                />
+              </Dropdown>
+            </>
           ) : (
             <>
               <Button
