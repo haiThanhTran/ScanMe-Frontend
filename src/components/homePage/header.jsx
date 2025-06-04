@@ -213,7 +213,7 @@ function Header() {
             <button
               key={item.path}
               className={`${styles.menuItem} ${
-                location.pathname === item.path ? styles.active : ""
+                location.pathname.startsWith(item.path) && item.path !== "/" ? styles.active : ""
               }`}
               onClick={() => navigate(item.path)}
               type="button"
