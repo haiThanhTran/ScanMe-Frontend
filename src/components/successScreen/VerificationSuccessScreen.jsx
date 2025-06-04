@@ -24,8 +24,8 @@ const VerificationSuccessScreen = ({ type }) => {
   const title =
     type === "waiting" ? "Vui lòng xác nhận tài khoản !" : "Email is Verified!";
   const message =
-   type === "waiting"
-      ? "Chúng tôi đã gửi email xác minh đến địa chỉ của bạn. Vui lòng kiểm tra Hộp Thư Đến hoặc Spam,Thư Rác.Sau đó nhấp vào liên kết để xác minh email của bạn."
+    type === "waiting"
+      ? "Chúng tôi đã gửi email xác minh đến địa chỉ của bạn. Vui lòng kiểm tra hộp thư đến hoặc spam,thư rác.Sau đó nhấp vào liên kết để xác minh email của bạn."
       : `Your email has been successfully verified. You can now go back to the login page to access the platform.`;
   const buttonText = type === "waiting" ? "Đăng nhập ngay" : "Go to Login";
 
