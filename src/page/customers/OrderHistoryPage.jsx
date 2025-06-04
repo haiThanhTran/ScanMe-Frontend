@@ -47,6 +47,33 @@ const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
+const commonReasons = [
+  "Tôi muốn thay đổi địa chỉ giao hàng",
+  "Tôi đặt nhầm sản phẩm",
+  "Tôi tìm được giá tốt hơn ở nơi khác",
+  "Thời gian giao hàng quá lâu",
+  "Khác",
+];
+
+const redButtonStyle = {
+  backgroundColor: "#C31E29",
+  color: "#fff",
+  border: "1px solid #C31E29",
+  transition: "all 0.2s",
+};
+const redButtonHoverStyle = {
+  backgroundColor: "#fff",
+  color: "#C31E29",
+  border: "1.5px solid #C31E29",
+};
+const redButtonDisabledStyle = {
+  backgroundColor: "#f5c6cb",
+  color: "#fff",
+  border: "1px solid #f5c6cb",
+  cursor: "not-allowed",
+  opacity: 0.7,
+};
+
 const OrderHistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
@@ -54,6 +81,12 @@ const OrderHistoryPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [cancelOrderId, setCancelOrderId] = useState(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
+  const [hoveredButtonId, setHoveredButtonId] = useState(null);
+  const [hoveredButtonType, setHoveredButtonType] = useState(null);
 
   const fetchOrdersByUser = useCallback(async () => {
     setLoading(true);
@@ -274,18 +307,56 @@ const OrderHistoryPage = () => {
       title: "Thao tác",
       key: "action",
       align: "center",
-      width: 100,
-      fixed: "right", // Giữ cột này cố định khi cuộn ngang
+      width: 160,
+      fixed: "right",
       render: (_, record) => (
-        <Button
-          type="primary"
-          ghost
-          icon={<EyeOutlined />}
-          onClick={() => showModal(record)}
-          size="small"
-        >
-          Xem
-        </Button>
+        <Space>
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => showModal(record)}
+            size="small"
+            style={{
+              ...redButtonStyle,
+              ...(hoveredButtonId === record._id && hoveredButtonType === "view"
+                ? redButtonHoverStyle
+                : {}),
+              marginRight: 8,
+            }}
+            onMouseEnter={() => {
+              setHoveredButtonId(record._id);
+              setHoveredButtonType("view");
+            }}
+            onMouseLeave={() => setHoveredButtonId(null)}
+          >
+            Xem
+          </Button>
+          <Button
+            size="small"
+            disabled={record.status !== "pending"}
+            onClick={() => {
+              setCancelOrderId(record._id);
+              setCancelModalVisible(true);
+              setCancelReason("");
+              setCustomReason("");
+            }}
+            style={{
+              ...redButtonStyle,
+              ...(hoveredButtonId === record._id &&
+              hoveredButtonType === "cancel" &&
+              record.status === "pending"
+                ? redButtonHoverStyle
+                : {}),
+              ...(record.status !== "pending" ? redButtonDisabledStyle : {}),
+            }}
+            onMouseEnter={() => {
+              setHoveredButtonId(record._id);
+              setHoveredButtonType("cancel");
+            }}
+            onMouseLeave={() => setHoveredButtonId(null)}
+          >
+            Hủy
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -359,9 +430,19 @@ const OrderHistoryPage = () => {
           open={isModalVisible}
           onCancel={handleCancelModal}
           footer={[
-            <Button key="back" type="primary" onClick={handleCancelModal}>
-              {" "}
-              Đóng{" "}
+            <Button
+              key="back"
+              onClick={handleCancelModal}
+              style={{
+                ...redButtonStyle,
+                ...(hoveredButtonType === "closeDetail"
+                  ? redButtonHoverStyle
+                  : {}),
+              }}
+              onMouseEnter={() => setHoveredButtonType("closeDetail")}
+              onMouseLeave={() => setHoveredButtonType(null)}
+            >
+              Đóng
             </Button>,
           ]}
           width={800}
@@ -560,6 +641,102 @@ const OrderHistoryPage = () => {
           ) : (
             <Skeleton active avatar paragraph={{ rows: 6 }} />
           )}
+        </Modal>
+
+        <Modal
+          title="Hủy đơn hàng"
+          open={cancelModalVisible}
+          onCancel={() => setCancelModalVisible(false)}
+          footer={[
+            <Button
+              key="cancel"
+              onClick={() => setCancelModalVisible(false)}
+              style={{
+                ...redButtonStyle,
+                ...(hoveredButtonType === "closeCancel"
+                  ? redButtonHoverStyle
+                  : {}),
+                marginRight: 8,
+              }}
+              onMouseEnter={() => setHoveredButtonType("closeCancel")}
+              onMouseLeave={() => setHoveredButtonType(null)}
+            >
+              Đóng
+            </Button>,
+            <Button
+              key="ok"
+              onClick={async () => {
+                let reason =
+                  cancelReason === "Khác" ? customReason : cancelReason;
+                if (!reason) {
+                  message.warning("Vui lòng chọn hoặc nhập lý do hủy đơn.");
+                  return;
+                }
+                try {
+                  setLoading(true);
+                  const res = await fetchUtils.patch(
+                    "/orders/user/update-status",
+                    {
+                      orderId: cancelOrderId,
+                      newStatus: "cancelled",
+                      cancellationReason: reason,
+                    },
+                    true
+                  );
+                  if (res.success) {
+                    message.success("Đã hủy đơn hàng thành công!");
+                    setCancelModalVisible(false);
+                    fetchOrdersByUser();
+                  } else {
+                    message.error(res.message || "Hủy đơn thất bại.");
+                  }
+                } catch (err) {
+                  message.error("Lỗi khi hủy đơn.");
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              style={{
+                ...redButtonStyle,
+                ...(hoveredButtonType === "confirmCancel"
+                  ? redButtonHoverStyle
+                  : {}),
+              }}
+              onMouseEnter={() => setHoveredButtonType("confirmCancel")}
+              onMouseLeave={() => setHoveredButtonType(null)}
+            >
+              Xác nhận hủy
+            </Button>,
+          ]}
+        >
+          <div>
+            <p>Chọn lý do hủy đơn:</p>
+            <div>
+              {commonReasons.map((reason) => (
+                <div key={reason} style={{ marginBottom: 8 }}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="cancelReason"
+                      value={reason}
+                      checked={cancelReason === reason}
+                      onChange={() => setCancelReason(reason)}
+                    />{" "}
+                    {reason}
+                  </label>
+                </div>
+              ))}
+              {cancelReason === "Khác" && (
+                <Input.TextArea
+                  rows={3}
+                  placeholder="Nhập lý do hủy đơn..."
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  style={{ marginTop: 8 }}
+                />
+              )}
+            </div>
+          </div>
         </Modal>
       </Content>
     </Layout>

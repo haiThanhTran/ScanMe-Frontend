@@ -238,12 +238,13 @@ function Header() {
               overlay={
                 <Menu>
                   <Menu.Item
-                    key="username"
-                    disabled
-                    style={{ fontWeight: 600, cursor: "default" }}
-                  >
-                    haiThanhTranDev
-                  </Menu.Item>
+  key="username"
+  disabled
+  style={{ fontWeight: 600, cursor: "default" }}
+>
+  {user?.username || "Tài khoản"}
+</Menu.Item>
+
                   <Menu.Divider />
                   {/* <Menu.Item
                     key="profile"

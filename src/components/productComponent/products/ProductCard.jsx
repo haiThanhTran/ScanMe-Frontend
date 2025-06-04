@@ -113,7 +113,7 @@ const ProductCard = ({ product }) => {
           block
           onClick={handleAddToCart}
           style={{
-            background: "#ff7800",
+            background: "#C31E29",
             border: "none",
             fontWeight: 600,
           }}
