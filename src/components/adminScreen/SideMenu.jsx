@@ -65,7 +65,7 @@ export default function SideMenu({onMenuItemClick}) {
                         Admin
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        admin@email.com
+                        scanme.voucher
                     </Typography>
                 </Box>
                 <OptionsMenu />

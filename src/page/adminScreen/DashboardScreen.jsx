@@ -8,6 +8,7 @@ import RoleBaseRoute from "../../security/RoleBaseRoute.jsx";
 import RolePermissionManagement from "./RoleManage.jsx";
 import DiscountManagement from "./DiscountManagement.jsx";
 import RouteManagement from "./RouteManagement.jsx";
+import OrderAdmin from "./OrderAdmin.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -71,6 +72,7 @@ export default function Dashboard() {
             }
           />
           <Route path="/manageUser" element={<ManageUser />} />
+          <Route path="/adminOrder" element={<OrderAdmin />} />
         </Routes>
       </Box>
     </Box>

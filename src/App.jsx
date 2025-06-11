@@ -18,7 +18,6 @@ import VouchersPage from "./page/VoucherPage/VouchersPage.jsx";
 import ProductDetailPage from "./page/ProductPages/ProductDetailPage.jsx";
 import ScrollToTop from "./utils/ScrollToTop.jsx"; // <<<<<< IMPORT COMPONENT MỚI
 import FAQPage from "./components/homePage/faqPage.jsx"; // Import FAQPage
-
 function App() {
   return (
     <>

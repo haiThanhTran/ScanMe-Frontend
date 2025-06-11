@@ -364,7 +364,7 @@ function Header() {
                   minWidth: 100,
                   borderRadius: 20,
                 }}
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/login")}
                 onMouseOver={(e) =>
                   (e.currentTarget.style.background = "#c31e29")
                 }
@@ -372,7 +372,7 @@ function Header() {
                   (e.currentTarget.style.background = "#e61e43")
                 }
               >
-                Đăng Ký
+                Đăng Nhập
               </Button>
             </>
           )}
