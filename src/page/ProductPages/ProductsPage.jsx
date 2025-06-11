@@ -20,6 +20,7 @@ import banner1 from "../../assets/banner1.jpeg";
 import banner2 from "../../assets/banner2.jpeg";
 import banner3 from "../../assets/banner3.jpeg";
 import banner4 from "../../assets/banner4.jpeg";
+import FlashSaleBar from "./FlashSaleBar";
 
 const { Title } = Typography;
 
@@ -165,6 +166,9 @@ const ProductsPage = () => {
           ))}
         </Slider>
       </div>
+      <FlashSaleBar
+       
+      />
       <div
         style={{
           display: "flex",
