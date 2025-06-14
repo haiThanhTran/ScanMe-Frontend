@@ -501,7 +501,7 @@ const ProductFeedbackSection = ({ feedback }) => (
                   fontWeight="600"
                   sx={{ color: '#2c2c2c' }}
                 >
-                  {fdbk.userId.name || 'Khách hàng'}
+                  {fdbk.userId.fullName || 'Khách hàng'}
                 </Typography>
                 <Rating
                   value={fdbk.rating}
