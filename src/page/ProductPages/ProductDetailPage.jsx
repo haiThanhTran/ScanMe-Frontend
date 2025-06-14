@@ -492,6 +492,7 @@ const ProductFeedbackSection = ({ feedback }) => (
                   backgroundColor: '#d32f2f',
                   fontWeight: '600'
                 }}
+                src={fdbk.userId ? fdbk.userId.avatar : 'NA'}
               >
                 {fdbk.userId ? fdbk.userId.avatar : 'NA'}
               </Avatar>
