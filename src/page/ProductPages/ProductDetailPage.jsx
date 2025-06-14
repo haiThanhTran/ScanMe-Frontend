@@ -493,9 +493,16 @@ const ProductFeedbackSection = ({ feedback }) => (
                   fontWeight: '600'
                 }}
               >
-                {fdbk.userId ? fdbk.userId.slice(-2).toUpperCase() : 'NA'}
+                {fdbk.userId ? fdbk.userId.avatar : 'NA'}
               </Avatar>
               <Box flex={1}>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="600"
+                  sx={{ color: '#2c2c2c' }}
+                >
+                  {fdbk.userId.name || 'Khách hàng'}
+                </Typography>
                 <Rating
                   value={fdbk.rating}
                   readOnly
@@ -506,7 +513,9 @@ const ProductFeedbackSection = ({ feedback }) => (
                     }
                   }}
                 />
-                <Typography
+              </Box>
+            </Box>
+            <Typography
                   variant="caption"
                   color="text.secondary"
                   display="block"
@@ -514,8 +523,6 @@ const ProductFeedbackSection = ({ feedback }) => (
                 >
                   {new Date(fdbk.createAt).toLocaleDateString("vi-VN")}
                 </Typography>
-              </Box>
-            </Box>
             <Typography
               variant="body2"
               sx={{
