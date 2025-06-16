@@ -115,6 +115,7 @@ export default function OrderAdmin() {
     year: "",
     month: "",
     week: "",
+    storeId: "",
   });
 
   const [stores, setStores] = useState([]);
@@ -167,10 +168,10 @@ export default function OrderAdmin() {
     try {
       const token = fetchUtils.getAuthToken();
       const params = new URLSearchParams({
-        storeId: dialog.storeId,
-        year: dialog.year,
-        month: dialog.month,
-        week: dialog.week,
+        storeId: dialog.storeId || "",
+        year: dialog.year || "",
+        month: dialog.month || "",
+        week: dialog.week || "",
       });
       const response = await fetch(
         apiConfig.baseUrl + "/admin/orders/export?" + params.toString(),
