@@ -46,6 +46,7 @@ import {
 } from "@mui/icons-material";
 import fetchUtils from "../../utils/fetchUtils.jsx";
 import apiConfig from "../../configs/apiConfig.jsx";
+import { saveAs } from "file-saver";
 
 function formatCurrency(amount) {
   return amount?.toLocaleString("vi-VN") + " ₫";
@@ -113,7 +114,19 @@ export default function OrderAdmin() {
     type: "",
     year: "",
     month: "",
+    week: "",
   });
+
+  const [stores, setStores] = useState([]);
+
+  useEffect(() => {
+    fetchUtils
+      .get("/stores")
+      .then((res) => {
+        setStores(res);
+      })
+      .catch((err) => setStores([]));
+  }, []);
 
   // Lấy dữ liệu mẫu từ API (bạn thay bằng fetch thực tế)
   useEffect(() => {
@@ -153,23 +166,33 @@ export default function OrderAdmin() {
   const handleExport = async () => {
     try {
       const token = fetchUtils.getAuthToken();
-      const response = await fetch(apiConfig.baseUrl + "/admin/orders/export", {
-        headers: { Authorization: `Bearer ${token}` },
+      const params = new URLSearchParams({
+        storeId: dialog.storeId,
+        year: dialog.year,
+        month: dialog.month,
+        week: dialog.week,
       });
+      const response = await fetch(
+        apiConfig.baseUrl + "/admin/orders/export?" + params.toString(),
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Lỗi khi tải file Excel");
       }
 
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let filename = "orders.xlsx";
+      console.log("contentDisposition", contentDisposition);
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) filename = match[1];
+      }
+
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "orders.xlsx";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      saveAs(blob, filename);
     } catch (err) {
       alert("Lỗi khi xuất Excel: " + err.message);
     }
@@ -190,7 +213,7 @@ export default function OrderAdmin() {
           variant="contained"
           color="success"
           startIcon={<Download />}
-          onClick={handleExport}
+          onClick={() => setDialog({ ...dialog, open: true })}
           sx={{ mr: 2 }}
         >
           Xuất Excel
@@ -497,6 +520,97 @@ export default function OrderAdmin() {
           }
         />
       </Box>
+      <Dialog
+        open={dialog.open}
+        onClose={() => setDialog({ ...dialog, open: false })}
+      >
+        <DialogTitle>Xuất Excel đơn hàng</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Cửa hàng</InputLabel>
+            <Select
+              value={dialog.storeId || ""}
+              label="Cửa hàng"
+              onChange={(e) =>
+                setDialog({ ...dialog, storeId: e.target.value })
+              }
+            >
+              <MenuItem value="">Tất cả</MenuItem>
+              {stores.map((store) => (
+                <MenuItem key={store._id} value={store._id}>
+                  {store.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Năm</InputLabel>
+            <Select
+              value={dialog.year || ""}
+              label="Năm"
+              onChange={(e) =>
+                setDialog({
+                  ...dialog,
+                  year: e.target.value,
+                  month: "",
+                  week: "",
+                })
+              }
+            >
+              {years.map((y) => (
+                <MenuItem key={y} value={y}>
+                  {y}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Tháng</InputLabel>
+            <Select
+              value={dialog.month || ""}
+              label="Tháng"
+              onChange={(e) =>
+                setDialog({ ...dialog, month: e.target.value, week: "" })
+              }
+              disabled={!dialog.year}
+            >
+              {months.map((m) => (
+                <MenuItem key={m} value={m}>
+                  {m}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Tuần</InputLabel>
+            <Select
+              value={dialog.week || ""}
+              label="Tuần"
+              onChange={(e) => setDialog({ ...dialog, week: e.target.value })}
+              disabled={!dialog.year || !dialog.month}
+            >
+              {[1, 2, 3, 4, 5].map((w) => (
+                <MenuItem key={w} value={w}>{`Tuần ${w}`}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialog({ ...dialog, open: false })}>
+            Hủy
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              handleExport();
+              setDialog({ ...dialog, open: false });
+            }}
+          >
+            Xuất Excel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
