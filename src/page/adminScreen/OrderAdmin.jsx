@@ -336,10 +336,10 @@ export default function OrderAdmin() {
                         </Avatar>
                         <Box>
                           <Typography fontWeight="bold">
-                            {order.user?.username}
+                            {order.shippingInfo?.name}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {order.user?.email}
+                            {order.shippingInfo?.phone}
                           </Typography>
                         </Box>
                       </Box>
