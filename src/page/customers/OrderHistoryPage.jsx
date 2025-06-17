@@ -21,6 +21,7 @@ import {
   List,
   Spin,
   Divider,
+  Rate,
 } from "antd";
 import {
   HistoryOutlined,
@@ -43,6 +44,7 @@ import styles from "./OrderHistoryPage.module.css"; // Đảm bảo bạn có fi
 import { formatDate } from "../../utils/format"; // Đảm bảo formatDateTime đã được định nghĩa
 import fetchUtils from "../../utils/fetchUtils";
 import { TagOutlined } from "@ant-design/icons";
+import TextArea from "antd/es/input/TextArea";
 const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -87,6 +89,11 @@ const OrderHistoryPage = () => {
   const [customReason, setCustomReason] = useState("");
   const [hoveredButtonId, setHoveredButtonId] = useState(null);
   const [hoveredButtonType, setHoveredButtonType] = useState(null);
+  const [modalFeedback, setModalFeedback] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const fetchOrdersByUser = useCallback(async () => {
     setLoading(true);
@@ -112,7 +119,7 @@ const OrderHistoryPage = () => {
       } else {
         message.error(
           "Không thể lấy thông tin đơn hàng: " +
-            (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
         );
       }
       setOrders([]);
@@ -256,8 +263,7 @@ const OrderHistoryPage = () => {
             title={record.items
               ?.map(
                 (item) =>
-                  `${item.productName || item.productId?.name} (x${
-                    item.quantity
+                  `${item.productName || item.productId?.name} (x${item.quantity
                   })`
               )
               .join(", ")}
@@ -307,10 +313,11 @@ const OrderHistoryPage = () => {
       title: "Thao tác",
       key: "action",
       align: "center",
-      width: 160,
+      width: 250,
       fixed: "right",
       render: (_, record) => (
         <Space>
+          {/* Nút Xem */}
           <Button
             icon={<EyeOutlined />}
             onClick={() => showModal(record)}
@@ -330,36 +337,99 @@ const OrderHistoryPage = () => {
           >
             Xem
           </Button>
-          <Button
-            size="small"
-            disabled={record.status !== "pending"}
-            onClick={() => {
-              setCancelOrderId(record._id);
-              setCancelModalVisible(true);
-              setCancelReason("");
-              setCustomReason("");
-            }}
-            style={{
-              ...redButtonStyle,
-              ...(hoveredButtonId === record._id &&
-              hoveredButtonType === "cancel" &&
-              record.status === "pending"
-                ? redButtonHoverStyle
-                : {}),
-              ...(record.status !== "pending" ? redButtonDisabledStyle : {}),
-            }}
-            onMouseEnter={() => {
-              setHoveredButtonId(record._id);
-              setHoveredButtonType("cancel");
-            }}
-            onMouseLeave={() => setHoveredButtonId(null)}
-          >
-            Hủy
-          </Button>
+
+          {record.status === "pending" && (
+            <Button
+              size="small"
+              onClick={() => {
+                setCancelOrderId(record._id);
+                setCancelModalVisible(true);
+                setCancelReason("");
+                setCustomReason("");
+              }}
+              style={{
+                ...redButtonStyle,
+                ...(hoveredButtonId === record._id && hoveredButtonType === "cancel"
+                  ? redButtonHoverStyle
+                  : {}),
+                ...(record.status !== "pending" ? redButtonDisabledStyle : {}),
+                marginRight: 8,
+              }}
+              onMouseEnter={() => {
+                setHoveredButtonId(record._id);
+                setHoveredButtonType("cancel");
+              }}
+              onMouseLeave={() => setHoveredButtonId(null)}
+            >
+              Hủy
+            </Button>
+          )}
+
+          {record.status === "confirmed" && record.paymentStatus === "pending" && (
+            <Button
+              size="small"
+              icon={<FileTextOutlined />}
+              onClick={() => {
+                setSelectedOrderId(record._id);
+                setModalFeedback(true);
+              }}
+
+              style={{
+                ...redButtonStyle,
+                ...(hoveredButtonId === record._id && hoveredButtonType === "review"
+                  ? redButtonHoverStyle
+                  : {}),
+                marginRight: 8,
+              }}
+              onMouseEnter={() => {
+                setHoveredButtonId(record._id);
+                setHoveredButtonType("review");
+              }}
+              onMouseLeave={() => setHoveredButtonId(null)}
+            >
+              Đánh giá đơn hàng
+            </Button>
+          )}
+
         </Space>
+
       ),
     },
   ];
+
+  const handleSubmitFeedback = async () => {
+    if (!rating) {
+      return message.warning("Vui lòng đánh giá và nhập bình luận.");
+    }
+   console.log("Submitting feedback:", {
+        orderId: selectedOrderId,
+        rating,
+        comment
+      });
+    try {
+      setSubmitting(true);
+
+ await fetchUtils.post(
+        "/orders/user/feedback",
+        {
+          orderId: selectedOrderId,
+          feedback: {
+            rating,
+            comment,
+          },
+        });
+
+      message.success("Đánh giá đã được gửi thành công.");
+      setModalFeedback(false);
+      setRating(0);
+      setComment("");
+    } catch (error) {
+      console.error(error);
+      message.error("Gửi đánh giá thất bại.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Layout className={styles.orderHistoryLayout}>
@@ -608,7 +678,7 @@ const OrderHistoryPage = () => {
                           Giảm:{" "}
                           {formatCurrency(
                             voucher.discountAmountApplied ||
-                              voucher.discountAmount
+                            voucher.discountAmount
                           )}
                         </Text>
                       </Paragraph>
@@ -736,6 +806,53 @@ const OrderHistoryPage = () => {
                 />
               )}
             </div>
+          </div>
+        </Modal>
+        <Modal
+          title="Cảm ơn bạn đã mua hàng!"
+          open={modalFeedback}
+          onCancel={() => {
+            setModalFeedback(false);
+            setRating(0);
+            setComment("");
+          }}
+          footer={null}
+          width={600}
+          centered
+        >
+          <div style={{ marginBottom: 16, marginTop: 16 }}>
+            <Rate value={rating} onChange={setRating} style={{ fontSize: 24 }} />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Nhận xét:</Text>
+            <TextArea
+              rows={4}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Nhập nhận xét của bạn..."
+            />
+          </div>
+
+          <div style={{ textAlign: "right" }}>
+            <Button
+              type="primary"
+              loading={submitting}
+              onClick={handleSubmitFeedback}
+              style={{
+                ...redButtonStyle,
+                ...( hoveredButtonType === "feedback"
+                  ? redButtonHoverStyle
+                  : {}),
+                marginRight: 8,
+              }}
+              onMouseEnter={() => {
+                setHoveredButtonType("feedback");
+              }}
+              onMouseLeave={() => setHoveredButtonId(null)}
+            >
+              Gửi đánh giá
+            </Button>
           </div>
         </Modal>
       </Content>

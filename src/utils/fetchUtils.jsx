@@ -32,17 +32,18 @@ const fetchApi = async (endpoint, method, body, requiresAuth = true) => {
 
     const options = {
       method,
-      headers: isFormData ? { ...headers } : { ...headers, 'Content-Type': 'application/json' },
-      body: isFormData ? body : body ? JSON.stringify(body) : null
+      headers: { ...headers },
     };
 
-    if (isFormData) {
-      delete options.headers['Content-Type'];
+    if (body && !(method === "GET" || method === "HEAD")) {
+      if (isFormData) {
+        options.body = body;
+        delete options.headers["Content-Type"];
+      } else {
+        options.body = JSON.stringify(body);
+        options.headers["Content-Type"] = "application/json";
+      }
     }
-
-    // if (body && (method === "POST" || method === "PUT" || method === "PATCH")) {
-    //   options.body = JSON.stringify(body);
-    // }
 
     const response = await fetch(url, options);
     const data = await response.json();
@@ -53,9 +54,11 @@ const fetchApi = async (endpoint, method, body, requiresAuth = true) => {
 
     return data;
   } catch (error) {
+    console.error("fetchApi error:", error);
     throw new Error(error.message || "Đã xảy ra lỗi");
   }
 };
+
 
 /**
  * GET request wrapper
