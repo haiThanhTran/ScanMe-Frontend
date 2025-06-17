@@ -502,7 +502,7 @@ const ProductFeedbackSection = ({ feedback }) => (
                   fontWeight="600"
                   sx={{ color: '#2c2c2c' }}
                 >
-                  {fdbk.userId.fullName || 'Khách hàng'}
+                  {fdbk.userId?.fullName || 'Khách hàng'}
                 </Typography>
                 <Rating
                   value={fdbk.rating}
@@ -522,7 +522,7 @@ const ProductFeedbackSection = ({ feedback }) => (
                   display="block"
                   sx={{ mt: 0.5, fontWeight: '500' }}
                 >
-                  {new Date(fdbk.createAt).toLocaleDateString("vi-VN")}
+                  {new Date(fdbk.createdAt).toLocaleDateString("vi-VN")}
                 </Typography>
             <Typography
               variant="body2"

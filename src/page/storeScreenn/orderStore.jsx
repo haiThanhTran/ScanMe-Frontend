@@ -436,10 +436,10 @@ const response = await fetchUtils.get(`/order-store?${params.toString()}`, true)
                         </Avatar>
                         <Box>
                           <Typography variant="body2" fontWeight="bold">
-                            {order.userId.fullName}
+                            {order.userId?.fullName}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {order.userId.email}
+                            {order.userId?.email}
                           </Typography>
                         </Box>
                       </Box>
