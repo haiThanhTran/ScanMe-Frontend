@@ -423,6 +423,7 @@ const OrderHistoryPage = () => {
       setModalFeedback(false);
       setRating(0);
       setComment("");
+      fetchOrdersByUser();
     } catch (error) {
       console.error(error);
       message.error("Gửi đánh giá thất bại.");
