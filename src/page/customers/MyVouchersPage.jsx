@@ -137,7 +137,7 @@ const MyVouchersPage = () => {
       dateString.includes("T") &&
       dateString.includes("Z")
     ) {
-      return formatDate(dateString);
+        return formatDate(dateString);
     }
     return formatDate(dateString); // Fallback to formatDate
   };
@@ -240,13 +240,13 @@ const MyVouchersPage = () => {
       const isExpired = effectiveEndDate
         ? new Date(effectiveEndDate) < new Date()
         : false;
-      return !voucher.isUsed && !isExpired && matchesSearch;
+       return !voucher.isUsed && !isExpired && matchesSearch;
     }
     if (activeTab === "expired") {
       const isExpired = effectiveEndDate
         ? new Date(effectiveEndDate) < new Date()
         : false;
-      return isExpired && matchesSearch; // Bao gồm cả voucher đã dùng mà hết hạn và chưa dùng mà hết hạn
+       return isExpired && matchesSearch; // Bao gồm cả voucher đã dùng mà hết hạn và chưa dùng mà hết hạn
     }
     return matchesSearch;
   });
@@ -326,7 +326,7 @@ const MyVouchersPage = () => {
       align: "center",
       render: (_, record) =>
         getVoucherStatusTag(record.isUsed, record.expiresAt || record.endDate),
-      filters: [
+       filters: [
         { text: "Chưa dùng & Còn hạn", value: "unused_valid" },
         { text: "Đã dùng", value: "used" },
         { text: "Đã hết hạn", value: "expired" },
@@ -510,9 +510,9 @@ const MyVouchersPage = () => {
                   labelStyle={{ width: 160 }}
                   label="Mã Voucher"
                 >
-                  <Tag color="processing">{selectedVoucher.code || "N/A"}</Tag>
-                </Descriptions.Item>
-                <Descriptions.Item label="Mô tả">
+                        <Tag color="processing">{selectedVoucher.code || "N/A"}</Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Mô tả">
                   <Paragraph
                     ellipsis={{
                       rows: 3,
@@ -520,22 +520,22 @@ const MyVouchersPage = () => {
                       symbol: "(xem thêm)",
                     }}
                   >
-                    {selectedVoucher.description || "Không có mô tả."}
-                  </Paragraph>
-                </Descriptions.Item>
-                <Descriptions.Item label="Cửa hàng">
+                            {selectedVoucher.description || "Không có mô tả."}
+                        </Paragraph>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Cửa hàng">
                   <BankOutlined />{" "}
                   {selectedVoucher.storeId?.name || "Áp dụng chung"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Loại giảm giá">
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Loại giảm giá">
                   {selectedVoucher.discountType === "percentage"
                     ? "Phần trăm (%)"
                     : "Số tiền cố định (VNĐ)"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Giá trị giảm">
-                  {selectedVoucher.discountType === "percentage"
-                    ? `${selectedVoucher.discountValue}%`
-                    : `${selectedVoucher.discountValue?.toLocaleString()}đ`}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Giá trị giảm">
+                        {selectedVoucher.discountType === "percentage"
+                        ? `${selectedVoucher.discountValue}%`
+                        : `${selectedVoucher.discountValue?.toLocaleString()}đ`}
                   {selectedVoucher.discountType === "percentage" &&
                     selectedVoucher.maxDiscountAmount > 0 && (
                       <Text type="secondary">
@@ -543,43 +543,43 @@ const MyVouchersPage = () => {
                         (Tối đa{" "}
                         {selectedVoucher.maxDiscountAmount.toLocaleString()}đ)
                       </Text>
-                    )}
-                </Descriptions.Item>
-                <Descriptions.Item label="Đơn hàng tối thiểu">
-                  {selectedVoucher.minPurchaseAmount > 0
-                    ? `${selectedVoucher.minPurchaseAmount.toLocaleString()}đ`
-                    : "Không yêu cầu"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Ngày nhận">
+                        )}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Đơn hàng tối thiểu">
+                        {selectedVoucher.minPurchaseAmount > 0
+                        ? `${selectedVoucher.minPurchaseAmount.toLocaleString()}đ`
+                        : "Không yêu cầu"}
+                    </Descriptions.Item>
+                     <Descriptions.Item label="Ngày nhận">
                   {selectedVoucher.acquiredAt
                     ? formatGenericDate(selectedVoucher.acquiredAt)
                     : "-"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Hiệu lực từ">
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Hiệu lực từ">
                   {selectedVoucher.startDate
                     ? formatGenericDate(selectedVoucher.startDate)
                     : "-"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Hết hạn vào">
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Hết hạn vào">
                   {formatGenericDate(
                     selectedVoucher.expiresAt || selectedVoucher.endDate
                   )}
-                </Descriptions.Item>
-                <Descriptions.Item label="Trạng thái">
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Trạng thái">
                   {getVoucherStatusTag(
                     selectedVoucher.isUsed,
                     selectedVoucher.expiresAt || selectedVoucher.endDate
                   )}
-                </Descriptions.Item>
-                <Descriptions.Item label="Lượt sử dụng">
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Lượt sử dụng">
                   {typeof selectedVoucher.totalQuantity === "number" &&
                   selectedVoucher.totalQuantity > 0
                     ? `${selectedVoucher.usedQuantity || 0} / ${
                         selectedVoucher.totalQuantity
                       }`
                     : "Không giới hạn"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Điều kiện">
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Điều kiện">
                   {selectedVoucher.restrictions?.newUsersOnly && (
                     <Tag color="purple">Chỉ cho người dùng mới</Tag>
                   )}
@@ -590,8 +590,8 @@ const MyVouchersPage = () => {
                     !selectedVoucher.restrictions?.oneTimeUse && (
                       <Text type="secondary">-</Text>
                     )}
-                </Descriptions.Item>
-              </Descriptions>
+                    </Descriptions.Item>
+                </Descriptions>
             </div>
           ) : (
             <Skeleton active avatar paragraph={{ rows: 6 }} />

@@ -34,6 +34,11 @@ import {
   Select,
   FormControl,
   InputLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import {
   ExpandMore,
@@ -119,6 +124,7 @@ export default function OrderAdmin() {
   });
 
   const [stores, setStores] = useState([]);
+  const [daysInMonth, setDaysInMonth] = useState([]);
 
   useEffect(() => {
     fetchUtils
@@ -128,6 +134,25 @@ export default function OrderAdmin() {
       })
       .catch((err) => setStores([]));
   }, []);
+
+  useEffect(() => {
+    if (dialog.year && dialog.month) {
+      const year = parseInt(dialog.year);
+      const month = parseInt(dialog.month);
+      const numDays = new Date(year, month, 0).getDate();
+      const daysArr = Array.from(
+        { length: numDays },
+        (_, i) =>
+          `${year}-${dialog.month.padStart(2, "0")}-${String(i + 1).padStart(
+            2,
+            "0"
+          )}`
+      );
+      setDaysInMonth(daysArr);
+    } else {
+      setDaysInMonth([]);
+    }
+  }, [dialog.year, dialog.month]);
 
   // Lấy dữ liệu mẫu từ API (bạn thay bằng fetch thực tế)
   useEffect(() => {
@@ -168,10 +193,14 @@ export default function OrderAdmin() {
     try {
       const token = fetchUtils.getAuthToken();
       const params = new URLSearchParams({
-        storeId: dialog.storeId || "",
+        storeIds:
+          dialog.storeIds && dialog.storeIds.length > 0
+            ? dialog.storeIds.join(",")
+            : "",
         year: dialog.year || "",
         month: dialog.month || "",
-        week: dialog.week || "",
+        days:
+          dialog.days && dialog.days.length > 0 ? dialog.days.join(",") : "",
       });
       const response = await fetch(
         apiConfig.baseUrl + "/admin/orders/export?" + params.toString(),
@@ -527,28 +556,39 @@ export default function OrderAdmin() {
       >
         <DialogTitle>Xuất Excel đơn hàng</DialogTitle>
         <DialogContent>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Cửa hàng</InputLabel>
+          <FormControl component="fieldset" fullWidth sx={{ mb: 2 }}>
+            <Typography sx={{ mb: 1 }}>Cửa hàng</Typography>
             <Select
-              value={dialog.storeId || ""}
-              label="Cửa hàng"
+              multiple
+              value={dialog.storeIds || []}
               onChange={(e) =>
-                setDialog({ ...dialog, storeId: e.target.value })
+                setDialog({ ...dialog, storeIds: e.target.value })
+              }
+              renderValue={(selected) =>
+                selected.length === 0
+                  ? "Tất cả"
+                  : stores
+                      .filter((s) => selected.includes(s._id))
+                      .map((s) => s.name)
+                      .join(", ")
               }
             >
-              <MenuItem value="">Tất cả</MenuItem>
+              <MenuItem value="">
+                <Checkbox checked={dialog.storeIds?.length === 0} />
+                <ListItemText primary="Tất cả" />
+              </MenuItem>
               {stores.map((store) => (
                 <MenuItem key={store._id} value={store._id}>
-                  {store.name}
+                  <Checkbox checked={dialog.storeIds?.includes(store._id)} />
+                  <ListItemText primary={store.name} />
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Năm</InputLabel>
-            <Select
+          <FormControl component="fieldset" fullWidth sx={{ mb: 2 }}>
+            <Typography sx={{ mb: 1 }}>Năm</Typography>
+            <RadioGroup
               value={dialog.year || ""}
-              label="Năm"
               onChange={(e) =>
                 setDialog({
                   ...dialog,
@@ -559,39 +599,47 @@ export default function OrderAdmin() {
               }
             >
               {years.map((y) => (
-                <MenuItem key={y} value={y}>
-                  {y}
-                </MenuItem>
+                <FormControlLabel
+                  key={y}
+                  value={y}
+                  control={<Radio />}
+                  label={y}
+                />
               ))}
-            </Select>
+            </RadioGroup>
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Tháng</InputLabel>
-            <Select
+          <FormControl component="fieldset" fullWidth sx={{ mb: 2 }}>
+            <Typography sx={{ mb: 1 }}>Tháng</Typography>
+            <RadioGroup
               value={dialog.month || ""}
-              label="Tháng"
               onChange={(e) =>
                 setDialog({ ...dialog, month: e.target.value, week: "" })
               }
-              disabled={!dialog.year}
             >
               {months.map((m) => (
-                <MenuItem key={m} value={m}>
-                  {m}
-                </MenuItem>
+                <FormControlLabel
+                  key={m}
+                  value={m}
+                  control={<Radio />}
+                  label={m}
+                />
               ))}
-            </Select>
+            </RadioGroup>
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Tuần</InputLabel>
+          <FormControl component="fieldset" fullWidth sx={{ mb: 2 }}>
+            <Typography sx={{ mb: 1 }}>Ngày</Typography>
             <Select
-              value={dialog.week || ""}
-              label="Tuần"
-              onChange={(e) => setDialog({ ...dialog, week: e.target.value })}
+              multiple
+              value={dialog.days || []}
+              onChange={(e) => setDialog({ ...dialog, days: e.target.value })}
+              renderValue={(selected) => selected.join(", ")}
               disabled={!dialog.year || !dialog.month}
             >
-              {[1, 2, 3, 4, 5].map((w) => (
-                <MenuItem key={w} value={w}>{`Tuần ${w}`}</MenuItem>
+              {daysInMonth.map((d) => (
+                <MenuItem key={d} value={d}>
+                  <Checkbox checked={dialog.days?.includes(d)} />
+                  <ListItemText primary={d} />
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
